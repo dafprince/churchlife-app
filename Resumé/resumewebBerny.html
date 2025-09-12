@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Next.js - Résolution d'erreurs et déploiement</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            margin: -20px -20px 40px -20px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.4em;
+            margin: 30px 0 15px 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            border-radius: 5px;
+        }
+        
+        h4 {
+            color: #2980b9;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .problem {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .solution {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            border: 1px solid #4a5568;
+        }
+        
+        .bash {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            border-left: 4px solid #68d391;
+        }
+        
+        .warning {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .workflow {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .workflow h3 {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            border-left: 5px solid #fff;
+        }
+        
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #fff;
+        }
+        
+        .icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #ffd54f 0%, #ffecb3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 0 0 15px 15px;
+            margin-left: -20px;
+            margin-right: -20px;
+            margin-bottom: -20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .code {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Guide Next.js</h1>
+            <div class="subtitle">Résolution d'erreurs et déploiement - Projet Queeny Design</div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">🔍</span>1. Diagnostic initial</h2>
+            
+            <div class="problem">
+                <h4>Problème identifié</h4>
+                <p>Erreurs 404 sur les images manquantes dans la console Next.js</p>
+            </div>
+            
+            <h3>Méthode de diagnostic</h3>
+            <p>Analyser les logs de la console pour identifier les chemins d'images introuvables :</p>
+            
+            <div class="code">
+GET /images/trends/modern-embroidery.png 404 in 3914ms
+GET /images/influencers/lalla-salma.png 404 in 3896ms
+GET /images/showroom/main-atelier.png 404 in 94ms
+            </div>
+            
+            <div class="success">
+                <strong>Apprentissage :</strong> Les erreurs 404 dans Next.js indiquent souvent des fichiers manquants dans le dossier <code>public/</code>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">🖼️</span>2. Résolution des images manquantes</h2>
+            
+            <h3>Stratégie adoptée</h3>
+            <p>Créer les dossiers et fichiers attendus par le code plutôt que modifier le code</p>
+            
+            <h4>Actions réalisées :</h4>
+            <ol>
+                <li>Créer <code>public/images/trends/</code> et y copier les images</li>
+                <li>Renommer les images pour correspondre aux noms dans le code</li>
+                <li>Créer <code>public/images/influencers/</code> avec les bonnes images</li>
+            </ol>
+            
+            <div class="bash">
+# Créer les dossiers manquants
+mkdir public/images/trends
+mkdir public/images/influencers
+mkdir public/images/showroom
+
+# Copier et renommer les images
+cp public/images/lifestyle/traditional-moroccan-outfit.png public/images/trends/modern-embroidery.png
+            </div>
+            
+            <div class="success">
+                <strong>Principe :</strong> Faire correspondre la structure de fichiers avec les imports du code
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">🔎</span>3. Recherche dans le code source</h2>
+            
+            <h3>Outils de recherche</h3>
+            
+            <h4>VS Code (recommandé) :</h4>
+            <div class="code">
+Ctrl + Shift + F
+Tapez le terme recherché : "lalla-salma" ou "trends"
+            </div>
+            
+            <h4>PowerShell (alternative) :</h4>
+            <div class="bash">
+Get-ChildItem -Recurse -Include *.tsx,*.ts,*.js,*.jsx | Select-String "lalla-salma"
+            </div>
+            
+            <div class="success">
+                <strong>But :</strong> Localiser où les chemins d'images sont définis dans les composants
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">⚡</span>4. Correction des erreurs d'hydratation</h2>
+            
+            <div class="problem">
+                <h4>Problème</h4>
+                <p><code>Math.random()</code> génère des valeurs différentes côté serveur/client</p>
+            </div>
+            
+            <div class="solution">
+                <h4>Solution</h4>
+                <p>Remplacer par des tableaux de positions fixes</p>
+            </div>
+            
+            <h4>Avant (problématique) :</h4>
+            <div class="code">
+// Cause une erreur d'hydratation
+style={{
+  left: `${Math.random() * 100}%`,
+  top: `${Math.random() * 100}%`,
+  animationDelay: `${Math.random() * 3}s`,
+}}
+            </div>
+            
+            <h4>Après (corrigé) :</h4>
+            <div class="code">
+// Positions fixes
+const positions = [
+  { left: 25, top: 15, delay: 0.5, duration: 2.5 },
+  { left: 75, top: 85, delay: 1.2, duration: 3.2 },
+  // ... autres positions
+];
+
+style={{
+  left: `${position.left}%`,
+  top: `${position.top}%`,
+  animationDelay: `${position.delay}s`,
+}}
+            </div>
+            
+            <div class="success">
+                <strong>Principe :</strong> Les valeurs aléatoires doivent être identiques lors du rendu serveur et client
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">📱</span>5. Optimisation responsive mobile</h2>
+            
+            <div class="problem">
+                <h4>Problème</h4>
+                <p>Textes trop grands sur mobile (text-5xl, text-7xl)</p>
+            </div>
+            
+            <div class="solution">
+                <h4>Solution</h4>
+                <p>Utiliser les breakpoints Tailwind avec approche mobile-first</p>
+            </div>
+            
+            <h4>Exemples de correction :</h4>
+            <div class="code">
+// AVANT (trop grand sur mobile)
+className="text-5xl md:text-7xl"
+
+// APRÈS (responsive optimal)
+className="text-2xl md:text-4xl lg:text-6xl"
+
+// AVANT
+className="text-7xl md:text-9xl"
+
+// APRÈS  
+className="text-3xl md:text-6xl lg:text-8xl xl:text-9xl"
+            </div>
+            
+            <div class="success">
+                <strong>Règle d'or :</strong> Commencer petit sur mobile, augmenter progressivement sur desktop
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">⚙️</span>6. Configuration pour déploiement statique</h2>
+            
+            <h3>Configuration next.config.mjs</h3>
+            <div class="code">
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',           // Export statique
+  trailingSlash: true,       // URLs avec slash final
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,       // Images non optimisées pour export statique
+  },
+}
+
+export default nextConfig
+            </div>
+            
+            <h3>Fichier public/_redirects</h3>
+            <div class="code">
+/*    /index.html   200
+            </div>
+            
+            <div class="warning">
+                <strong>Important :</strong> Ces configurations sont essentielles pour que Netlify puisse servir correctement votre application Next.js
+            </div>
+        </div>
+
+        <div class="workflow">
+            <h2><span class="icon">🚀</span>7. Workflow de déploiement Netlify</h2>
+            
+            <div class="step">
+                <h4>1. Modifier le code source</h4>
+                <p>Éditer vos fichiers .tsx, .ts, etc.</p>
+            </div>
+            
+            <div class="step">
+                <h4>2. Compiler le projet</h4>
+                <div class="bash">pnpm build</div>
+                <p>Cette commande recompile tout vers le dossier <code>out/</code></p>
+            </div>
+            
+            <div class="step">
+                <h4>3. Uploader sur Netlify</h4>
+                <p>Uploader le <strong>contenu</strong> du dossier <code>out/</code> (pas le dossier lui-même)</p>
+            </div>
+            
+            <div class="step">
+                <h4>4. Vérifier en ligne</h4>
+                <p>Vos changements sont maintenant visibles sur votre site</p>
+            </div>
+            
+            <div class="warning">
+                <strong>Erreur commune :</strong> Oublier <code>pnpm build</code> après modifications - les changements ne seront pas visibles en ligne !
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">💡</span>8. Points clés pour futurs projets</h2>
+            
+            <h3>🐛 Debugging Next.js</h3>
+            <ul>
+                <li>Toujours vérifier la console pour les erreurs 404</li>
+                <li>Utiliser la recherche globale pour localiser le code source</li>
+                <li>Les erreurs d'hydratation viennent souvent de valeurs aléatoires</li>
+            </ul>
+            
+            <h3>📱 Responsive Tailwind</h3>
+            <ul>
+                <li>Approche mobile first : <span class="highlight">text-sm md:text-lg lg:text-xl</span></li>
+                <li>Tester sur mobile dès le début du développement</li>
+                <li>Classes courantes : <span class="highlight">text-2xl md:text-4xl lg:text-6xl</span></li>
+            </ul>
+            
+            <h3>🚀 Déploiement statique</h3>
+            <ul>
+                <li><strong>Toujours</strong> faire <code>pnpm build</code> avant de déployer</li>
+                <li>Le dossier <code>out/</code> contient la version finale</li>
+                <li>Netlify a besoin du contenu, pas du dossier</li>
+            </ul>
+            
+            <h3>📁 Structure de projet</h3>
+            <ul>
+                <li><code>public/images/</code> pour les assets statiques</li>
+                <li><code>components/</code> pour les composants réutilisables</li>
+                <li><code>app/</code> pour les pages principales</li>
+            </ul>
+            
+            <div class="success">
+                <strong>Cette méthodologie s'applique à tout projet Next.js avec TailwindCSS et déploiement statique.</strong>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>🎯 Résumé du succès</h3>
+            <p>✅ Erreurs 404 résolues<br>
+            ✅ Erreurs d'hydratation corrigées<br>
+            ✅ Responsive mobile optimisé<br>
+            ✅ Déploiement Netlify réussi</p>
+            <br>
+            <p><strong>Projet Queeny Design - Guide de référence pour futurs projets similaires</strong></p>
+        </div>
+    </div>
+</body>
+</html>

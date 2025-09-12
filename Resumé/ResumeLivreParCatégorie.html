@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Pratique - Livres par Catégorie</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(90deg, #f3f0ff 0%, transparent 100%);
+            border-left: 4px solid #667eea;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .why-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .why-box h4 {
+            color: #1565c0;
+            margin-top: 0;
+        }
+        
+        .problem-solution {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .problem-solution h4 {
+            color: #e65100;
+            margin-top: 0;
+        }
+        
+        .code-explained {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .code-header {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            margin: 0;
+            overflow-x: auto;
+        }
+        
+        .explanation {
+            padding: 15px;
+            background: #f8f9fa;
+        }
+        
+        .step-box {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            background: #0ea5e9;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .flow-simple {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .flow-arrow {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guide Pratique : Affichage des Livres par Catégorie</h1>
+        
+        <h2>1. Nouvelle Route Backend - Pourquoi et Comment</h2>
+        
+        <div class="why-box">
+            <h4>Pourquoi une nouvelle route ?</h4>
+            <p>On avait déjà <code>GET /api/livres</code> qui renvoie TOUS les livres. Maintenant on veut filtrer par catégorie. On pourrait :</p>
+            <ul>
+                <li>Récupérer tous les livres puis filtrer côté mobile (lent et gourmand)</li>
+                <li>Créer une route spécialisée qui filtre côté serveur (rapide et efficace)</li>
+            </ul>
+            <p>On choisit la deuxième option pour la performance.</p>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">Route Backend - routes/livres.js</div>
+            <pre><code>router.get('/category/:categoryId', async (req, res) => {
+  try {
+    const livres = await Livre.find({ 
+      categories: req.params.categoryId,  // Filtre MongoDB
+      isActive: true 
+    })
+      .populate('categories', 'nom')      // Récupère les noms des catégories
+      .populate('uploadedBy', 'name email')
+      .sort({ uploadedAt: -1 });
+    
+    res.json(livres);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur', error: error.message });
+  }
+});</code></pre>
+            <div class="explanation">
+                <strong>Explication ligne par ligne :</strong>
+                <ul>
+                    <li><code>categories: req.params.categoryId</code> - MongoDB cherche tous les livres qui contiennent cet ID dans leur tableau de catégories</li>
+                    <li><code>.populate('categories', 'nom')</code> - Transforme les IDs de catégorie en objets avec le nom (c'est ça qui causait l'erreur Map/String)</li>
+                    <li><code>.sort({ uploadedAt: -1 })</code> - Plus récents en premier</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>2. Modèle Mobile - Gestion du Problème Map/String</h2>
+
+        <div class="problem-solution">
+            <h4>Le problème Map&lt;String,dynamic&gt; is not a subtype of String</h4>
+            <p>Votre backend avec <code>.populate('categories', 'nom')</code> renvoie ça :</p>
+            <pre>{"categories": [{"_id": "123", "nom": "Fiction"}]}</pre>
+            <p>Mais votre modèle Flutter s'attendait à ça :</p>
+            <pre>{"categories": ["123", "456"]}</pre>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">Solution - livre_model.dart</div>
+            <pre><code>class LivreModel {
+  final List&lt;CategoryInfo&gt; categories; // Au lieu de List&lt;String&gt;
+
+  factory LivreModel.fromJson(Map&lt;String, dynamic&gt; json) {
+    // Traitement spécial pour les catégories peuplées
+    List&lt;CategoryInfo&gt; categoriesList = [];
+    if (json['categories'] != null) {
+      categoriesList = (json['categories'] as List)
+          .map((cat) => CategoryInfo.fromJson(cat))
+          .toList();
+    }
+
+    return LivreModel(
+      categories: categoriesList,
+      // ... autres champs
+    );
+  }
+
+  // Méthode utilitaire pour l'affichage
+  String getCategoryNames() {
+    return categories.map((cat) => cat.nom).join(', ');
+  }
+}
+
+class CategoryInfo {
+  final String id;
+  final String nom;
+
+  factory CategoryInfo.fromJson(Map&lt;String, dynamic&gt; json) {
+    return CategoryInfo(
+      id: json['_id'] ?? '',
+      nom: json['nom'] ?? '',
+    );
+  }
+}</code></pre>
+            <div class="explanation">
+                <strong>Pourquoi cette solution :</strong>
+                <ul>
+                    <li><code>CategoryInfo</code> - Classe dédiée pour gérer les objets catégorie complexes</li>
+                    <li><code>categoriesList.map((cat) => CategoryInfo.fromJson(cat))</code> - Parse chaque objet catégorie individuellement</li>
+                    <li><code>getCategoryNames()</code> - Méthode pratique pour l'affichage "Fiction, Science-Fiction"</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>3. Flux de Navigation avec Paramètres</h2>
+
+        <div class="flow-simple">
+            <strong>Page Catégories</strong><br>
+            <div class="flow-arrow">↓ (clic sur catégorie)</div>
+            <strong>Passage de paramètres :</strong><br>
+            categoryId: "abc123" + categoryName: "Fiction"<br>
+            <div class="flow-arrow">↓</div>
+            <strong>Page Livres</strong><br>
+            Titre: "📚 Fiction"<br>
+            API Call: /livres/category/abc123
+        </div>
+
+        <div class="step-box">
+            <span class="step-number">1</span>
+            <strong>Modification CategoryCard Navigation</strong>
+            <p>Dans <code>category_page.dart</code>, on change la fonction <code>_onCategoryTap</code> :</p>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">Navigation - category_page.dart</div>
+            <pre><code>void _onCategoryTap(BuildContext context, CategoryModel category) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => BlocProvider.value(
+        value: context.read&lt;LivreBloc&gt;(),
+        child: LivrePage(
+          categoryId: category.id,        // Pour l'API
+          categoryName: category.nom,     // Pour l'affichage
+        ),
+      ),
+    ),
+  );
+}</code></pre>
+            <div class="explanation">
+                <strong>Points techniques :</strong>
+                <ul>
+                    <li><code>BlocProvider.value</code> - Réutilise le BLoC existant du main.dart au lieu d'en créer un nouveau</li>
+                    <li><code>categoryId</code> - Nécessaire pour l'appel API de filtrage</li>
+                    <li><code>categoryName</code> - Nécessaire pour afficher "Livres de Fiction" dans le titre</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>4. BLoC avec Contexte de Catégorie</h2>
+
+        <div class="why-box">
+            <h4>Pourquoi passer categoryName dans l'Event ?</h4>
+            <p>Le BLoC a besoin du nom de la catégorie pour l'afficher dans le titre de la page, mais l'API ne renvoie que les livres, pas le nom de la catégorie filtrée. Donc on le passe en paramètre pour le conserver.</p>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">Event - livre_event.dart</div>
+            <pre><code>class LoadLivresByCategoryEvent extends LivreEvent {
+  final String categoryId;     // Pour l'API
+  final String categoryName;   // Pour l'affichage
+
+  LoadLivresByCategoryEvent({
+    required this.categoryId,
+    required this.categoryName,
+  });
+}</code></pre>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">State - livre_state.dart</div>
+            <pre><code>class LivreLoaded extends LivreState {
+  final List&lt;LivreModel&gt; livres;
+  final String categoryName;   // Préservé pour l'affichage
+
+  LivreLoaded({required this.livres, required this.categoryName});
+}</code></pre>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">BLoC - livre_bloc.dart</div>
+            <pre><code>on&lt;LoadLivresByCategoryEvent&gt;((event, emit) async {
+  emit(LivreLoading());
+
+  try {
+    final livres = await repository.getLivresByCategory(event.categoryId);
+    emit(LivreLoaded(
+      livres: livres, 
+      categoryName: event.categoryName, // Passé à l'état
+    ));
+  } catch (e) {
+    emit(LivreError(e.toString()));
+  }
+});</code></pre>
+            <div class="explanation">
+                <strong>Flux d'exécution :</strong>
+                <ol>
+                    <li>Event reçu avec categoryId + categoryName</li>
+                    <li>Émission de LivreLoading (spinner affiché)</li>
+                    <li>Appel API avec categoryId uniquement</li>
+                    <li>Si succès : LivreLoaded avec livres + categoryName préservé</li>
+                    <li>L'UI peut afficher "📚 Fiction" dans le titre</li>
+                </ol>
+            </div>
+        </div>
+
+        <h2>5. Configuration Cruciale - main.dart</h2>
+
+        <div class="problem-solution">
+            <h4>Erreur fréquente : "Could not find the correct Provider&lt;LivreBloc&gt;"</h4>
+            <p>Cette erreur arrive quand on oublie d'ajouter le LivreBloc dans le main.dart ou qu'on fait un hot-reload au lieu d'un hot-restart après l'ajout.</p>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">Configuration - main.dart</div>
+            <pre><code>MultiBlocProvider(
+  providers: [
+    BlocProvider(create: (_) => UserBloc(...)),
+    BlocProvider(create: (_) => CategoryBloc(...)),
+    BlocProvider(create: (_) => LivreBloc(...)), // OBLIGATOIRE
+  ],
+  child: MyApp(),
+)</code></pre>
+            <div class="explanation">
+                <strong>Règle importante :</strong> Après modification du main.dart, toujours faire un <strong>Hot Restart</strong> (Ctrl+Shift+F5), pas un Hot Reload, sinon les nouveaux BLoCs ne sont pas reconnus.
+            </div>
+        </div>
+
+        <h2>6. Lecteur PDF - Évolution des Solutions</h2>
+
+        <div class="step-box">
+            <span class="step-number">1</span>
+            <strong>Tentative flutter_pdfview + path_provider</strong>
+            <p><strong>Problème :</strong> "no implementation found for method getTemporaryDirectory"</p>
+            <p><strong>Cause :</strong> Plugin manquant ou mal configuré</p>
+        </div>
+
+        <div class="step-box">
+            <span class="step-number">2</span>
+            <strong>Tentative url_launcher</strong>
+            <p><strong>Problème :</strong> "Building with plugins requires symlink support"</p>
+            <p><strong>Cause :</strong> Configuration Windows Developer Mode</p>
+        </div>
+
+        <div class="step-box">
+            <span class="step-number">3</span>
+            <strong>Tentative pdfx + internet_file</strong>
+            <p><strong>Problème :</strong> "version solving failed"</p>
+            <p><strong>Cause :</strong> Conflit de versions HTTP entre packages</p>
+        </div>
+
+        <div class="step-box">
+            <span class="step-number">4</span>
+            <strong>Solution finale : pdfx seul</strong>
+            <p><strong>Résultat :</strong> ✅ Fonctionne parfaitement</p>
+            <p><strong>Pourquoi :</strong> Package moderne, pas de dépendances conflictuelles</p>
+        </div>
+
+        <div class="code-explained">
+            <div class="code-header">Solution PDF - pdf_viewer_pdfx.dart</div>
+            <pre><code>void _initializePdf() async {
+  try {
+    // Télécharge le PDF depuis l'URL
+    final response = await http.get(Uri.parse(widget.pdfUrl));
+    
+    if (response.statusCode == 200) {
+      pdfController = PdfController(
+        document: PdfDocument.openData(response.bodyBytes),
+      );
+      setState(() { isLoading = false; });
+    }
+  } catch (e) {
+    setState(() { error = 'Erreur: $e'; });
+  }
+}</code></pre>
+            <div class="explanation">
+                <strong>Approche technique :</strong>
+                <ul>
+                    <li><code>http.get()</code> - Utilise le package HTTP déjà présent</li>
+                    <li><code>response.bodyBytes</code> - Récupère le PDF en bytes bruts</li>
+                    <li><code>PdfDocument.openData()</code> - Méthode stable de pdfx</li>
+                    <li>Pas de fichier temporaire nécessaire</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>7. URL Construction et Gestion des Chemins</h2>
+
+        <div class="code-explained">
+            <div class="code-header">URLs - livre_model.dart</div>
+            <pre><code>String getImageUrl() {
+  return 'http://10.0.2.2:5000/uploads/images/$imageFileName';
+}
+
+String getPdfUrl() {
+  return 'http://10.0.2.2:5000/uploads/livres/$pdfFileName';
+}</code></pre>
+            <div class="explanation">
+                <strong>Organisation des dossiers serveur :</strong>
+                <ul>
+                    <li><code>uploads/images/</code> - Images de couverture (livres ET catégories)</li>
+                    <li><code>uploads/livres/</code> - Fichiers PDF uniquement</li>
+                    <li><code>uploads/audios/</code> - Fichiers audio (autre fonctionnalité)</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>8. Points de Validation Essentiels</h2>
+
+        <div class="why-box">
+            <h4>Checklist de debugging</h4>
+            <ul>
+                <li><strong>Backend :</strong> Tester l'URL manually : <code>http://localhost:5000/api/livres/category/VRAI_ID</code></li>
+                <li><strong>Mobile :</strong> Vérifier les imports et l'ordre Model → Service → Repository → BLoC</li>
+                <li><strong>Navigation :</strong> BlocProvider.value pour réutiliser les BLoCs</li>
+                <li><strong>PDF :</strong> Tester l'URL PDF dans le navigateur avant d'implémenter le lecteur</li>
+                <li><strong>États :</strong> Gérer loading, error, et liste vide</li>
+            </ul>
+        </div>
+
+        <div class="step-box">
+            <span class="step-number">🎯</span>
+            <strong>Résultat Final</strong>
+            <p>Navigation fluide : Catégories → Livres filtrés → Lecteur PDF intégré, avec architecture Clean maintenue et gestion complète des erreurs.</p>
+        </div>
+    </div>
+</body>
+</html>

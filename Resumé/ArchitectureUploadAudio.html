@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Complet - Architecture Upload Audio</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .page-break { page-break-after: always; }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #1e40af;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(90deg, #dbeafe 0%, transparent 100%);
+            border-left: 4px solid #2563eb;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .note-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .error-box {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #dc2626;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: none;
+            color: #e5e7eb;
+            padding: 0;
+        }
+        
+        .architecture-diagram {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .checklist {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .checklist input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        .flow-step {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .flow-step::after {
+            content: "↓";
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #3b82f6;
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #f3f4f6;
+            font-weight: bold;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 GUIDE COMPLET : Architecture Upload Audio avec React/Node.js/MongoDB</h1>
+        
+        <div class="note-box">
+            <strong>📊 Évaluation de votre compréhension : 7/10</strong><br>
+            Très bonne compréhension générale ! Ce guide complet vous aidera à maîtriser tous les détails techniques.
+        </div>
+
+        <h2><span class="emoji">🎯</span>1. PROBLÉMATIQUE ET CONTEXTE</h2>
+        
+        <h3>Besoin fonctionnel</h3>
+        <p>Permettre à un administrateur de gérer des fichiers audio avec leurs images de couverture via une interface web.</p>
+        
+        <h3>Défis techniques à résoudre</h3>
+        <ul>
+            <li>Gestion de fichiers volumineux (audio + image)</li>
+            <li>Séparation entre métadonnées et fichiers physiques</li>
+            <li>Communication entre trois couches : Frontend ↔ Backend ↔ Database</li>
+            <li>Streaming et affichage des médias dans le navigateur</li>
+        </ul>
+
+        <h2><span class="emoji">🏗️</span>2. ARCHITECTURE GLOBALE DE LA SOLUTION</h2>
+        
+        <div class="architecture-diagram">
+            <strong>FRONTEND (React.js)</strong><br>
+            ↓ API REST ↓<br>
+            <strong>BACKEND (Node.js + Express)</strong><br>
+            ↓ Mongoose ORM ↓<br>
+            <strong>DATABASE (MongoDB)</strong> + <strong>FILE SYSTEM (Local Storage)</strong>
+        </div>
+
+        <h3>Répartition des responsabilités</h3>
+        <table>
+            <tr>
+                <th>Composant</th>
+                <th>Responsabilité</th>
+                <th>Stockage</th>
+            </tr>
+            <tr>
+                <td><strong>MongoDB</strong></td>
+                <td>Métadonnées des audios</td>
+                <td>Titre, artiste, chemins des fichiers, dates</td>
+            </tr>
+            <tr>
+                <td><strong>File System</strong></td>
+                <td>Fichiers physiques</td>
+                <td>Fichiers MP3, images JPG/PNG</td>
+            </tr>
+            <tr>
+                <td><strong>Backend</strong></td>
+                <td>Logique métier, validation</td>
+                <td>Routes, contrôleurs, middlewares</td>
+            </tr>
+            <tr>
+                <td><strong>Frontend</strong></td>
+                <td>Interface utilisateur</td>
+                <td>État local React, cache navigateur</td>
+            </tr>
+        </table>
+
+        <h2><span class="emoji">📦</span>3. PACKAGES ET DÉPENDANCES</h2>
+        
+        <h3>Backend</h3>
+        <pre><code>npm install multer  # Gestion des uploads multipart/form-data
+npm install mongoose  # ODM pour MongoDB
+npm install express  # Framework web
+npm install cors  # Cross-Origin Resource Sharing</code></pre>
+        
+        <h3>Frontend</h3>
+        <pre><code>npm install react-icons  # Bibliothèque d'icônes</code></pre>
+
+        <div class="note-box">
+            <strong>💡 Pourquoi Multer ?</strong><br>
+            • Gère automatiquement les uploads multipart/form-data<br>
+            • Configure les destinations et noms de fichiers<br>
+            • Valide les types et tailles de fichiers<br>
+            • Intégration facile avec Express
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2><span class="emoji">💾</span>4. CONFIGURATION DE LA BASE DE DONNÉES</h2>
+        
+        <h3>Structure de la collection MongoDB</h3>
+        <pre><code>// models/Audio.js
+const mongoose = require('mongoose');
+
+const AudioSchema = new mongoose.Schema({
+  // Informations de base
+  titre: { type: String, required: true },
+  artiste: { type: String, required: true },
+  album: { type: String, default: '' },
+  genre: { type: String, default: '' },
+  description: { type: String, default: '' },
+  
+  // Fichier audio
+  audioFileName: { type: String, required: true },
+  audioOriginalName: { type: String, required: true },
+  audioPath: { type: String, required: true },  // Ex: "uploads/audios/123.mp3"
+  audioSize: { type: Number, required: true },
+  audioMimeType: { type: String, required: true },
+  duration: { type: Number, default: 0 },
+  
+  // Image de couverture
+  imageFileName: { type: String, required: true },
+  imageOriginalName: { type: String, required: true },
+  imagePath: { type: String, required: true },  // Ex: "uploads/images/456.jpg"
+  imageSize: { type: Number, required: true },
+  imageMimeType: { type: String, required: true },
+  
+  // Métadonnées
+  uploadedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',  // Relation avec la collection Users
+    required: true
+  },
+  uploadedAt: { type: Date, default: Date.now },
+  playCount: { type: Number, default: 0 },
+  isActive: { type: Boolean, default: true }
+});
+
+module.exports = mongoose.model('Audio', AudioSchema, 'audios');</code></pre>
+
+        <h2><span class="emoji">🛤️</span>5. CONFIGURATION DU BACKEND</h2>
+        
+        <h3>A. Configuration de Multer</h3>
+        <pre><code>// config/multerConfig.js
+const multer = require('multer');
+const path = require('path');
+
+// Configuration du stockage
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    // Déterminer le dossier selon le type de fichier
+    if (file.fieldname === 'audio') {
+      cb(null, 'uploads/audios/');
+    } else if (file.fieldname === 'image') {
+      cb(null, 'uploads/images/');
+    }
+  },
+  
+  filename: function(req, file, cb) {
+    // Créer un nom unique : timestamp-random.extension
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// Validation des fichiers
+const fileFilter = (req, file, cb) => {
+  if (file.fieldname === 'audio') {
+    const audioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav'];
+    if (audioTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Format audio non supporté'), false);
+    }
+  } else if (file.fieldname === 'image') {
+    const imageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (imageTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Format image non supporté'), false);
+    }
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 50 * 1024 * 1024 }  // Limite 50MB
+});
+
+module.exports = upload;</code></pre>
+
+        <div class="page-break"></div>
+
+        <h3>B. Routes CRUD pour les audios</h3>
+        <pre><code>// routes/audios.js
+const express = require('express');
+const router = express.Router();
+const Audio = require('../models/Audio');
+const upload = require('../config/multerConfig');
+const fs = require('fs');
+
+// POST - Upload d'un nouvel audio
+router.post('/upload', upload.fields([
+  { name: 'audio', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    // Vérifier la présence des fichiers
+    if (!req.files.audio || !req.files.image) {
+      return res.status(400).json({ 
+        message: 'Audio et image sont requis' 
+      });
+    }
+
+    // Récupérer les fichiers uploadés
+    const audioFile = req.files.audio[0];
+    const imageFile = req.files.image[0];
+
+    // Créer le document dans MongoDB
+    const newAudio = new Audio({
+      titre: req.body.titre,
+      artiste: req.body.artiste,
+      album: req.body.album || '',
+      genre: req.body.genre || '',
+      description: req.body.description || '',
+      
+      audioFileName: audioFile.filename,
+      audioOriginalName: audioFile.originalname,
+      audioPath: audioFile.path,
+      audioSize: audioFile.size,
+      audioMimeType: audioFile.mimetype,
+      
+      imageFileName: imageFile.filename,
+      imageOriginalName: imageFile.originalname,
+      imagePath: imageFile.path,
+      imageSize: imageFile.size,
+      imageMimeType: imageFile.mimetype,
+      
+      uploadedBy: req.user?._id || "607f1f77bcf86cd799439011"
+    });
+
+    const savedAudio = await newAudio.save();
+    res.status(201).json({
+      message: 'Audio uploadé avec succès',
+      audio: savedAudio
+    });
+
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Erreur lors de l\'upload',
+      error: error.message 
+    });
+  }
+});
+
+// GET - Récupérer tous les audios
+router.get('/', async (req, res) => {
+  try {
+    const audios = await Audio.find({ isActive: true })
+      .populate('uploadedBy', 'name email')
+      .sort({ uploadedAt: -1 });
+    
+    res.json(audios);
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Erreur lors de la récupération',
+      error: error.message 
+    });
+  }
+});
+
+// DELETE - Supprimer un audio
+router.delete('/:id', async (req, res) => {
+  try {
+    const audio = await Audio.findById(req.params.id);
+    
+    if (!audio) {
+      return res.status(404).json({ 
+        message: 'Audio non trouvé' 
+      });
+    }
+    
+    // Supprimer les fichiers physiques
+    if (fs.existsSync(audio.audioPath)) {
+      fs.unlinkSync(audio.audioPath);
+    }
+    if (fs.existsSync(audio.imagePath)) {
+      fs.unlinkSync(audio.imagePath);
+    }
+    
+    // Supprimer de MongoDB
+    await Audio.findByIdAndDelete(req.params.id);
+    
+    res.json({ 
+      message: 'Audio supprimé avec succès' 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Erreur lors de la suppression',
+      error: error.message 
+    });
+  }
+});
+
+module.exports = router;</code></pre>
+
+        <div class="page-break"></div>
+
+        <h3>C. Configuration du serveur Express</h3>
+        <pre><code>// server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const audiosRouter = require('./routes/audios');
+
+const app = express();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CRUCIAL : Servir les fichiers statiques
+app.use('/uploads', express.static('uploads'));
+
+// Routes
+app.use('/api/audios', audiosRouter);
+
+// Connexion MongoDB et démarrage
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => {
+    app.listen(5000, () => {
+      console.log('Serveur démarré sur http://localhost:5000');
+    });
+  });</code></pre>
+
+        <div class="success-box">
+            <strong>✅ Point clé : Middleware Static</strong><br>
+            La ligne <code>app.use('/uploads', express.static('uploads'))</code> est CRUCIALE !<br>
+            Elle permet d'accéder aux fichiers via : <code>http://localhost:5000/uploads/audios/fichier.mp3</code>
+        </div>
+
+        <h2><span class="emoji">🧪</span>6. TEST AVEC POSTMAN</h2>
+        
+        <h3>Configuration de la requête de test</h3>
+        <table>
+            <tr>
+                <th>Paramètre</th>
+                <th>Valeur</th>
+            </tr>
+            <tr>
+                <td>Méthode</td>
+                <td>POST</td>
+            </tr>
+            <tr>
+                <td>URL</td>
+                <td>http://localhost:5000/api/audios/upload</td>
+            </tr>
+            <tr>
+                <td>Body Type</td>
+                <td>form-data</td>
+            </tr>
+        </table>
+
+        <h3>Champs à envoyer</h3>
+        <ul>
+            <li><code>titre</code> (Text) : "Ma chanson"</li>
+            <li><code>artiste</code> (Text) : "Mon artiste"</li>
+            <li><code>album</code> (Text) : "Mon album"</li>
+            <li><code>audio</code> (File) : Sélectionner un fichier MP3</li>
+            <li><code>image</code> (File) : Sélectionner une image JPG/PNG</li>
+        </ul>
+
+        <div class="page-break"></div>
+
+        <h2><span class="emoji">🎨</span>7. IMPLÉMENTATION FRONTEND</h2>
+        
+        <h3>A. Services API</h3>
+        <pre><code>// services/api.js
+
+// Récupérer tous les audios
+export async function getAudios() {
+  const res = await fetch('/api/audios');
+  if (!res.ok) throw new Error('Erreur réseau');
+  return res.json();
+}
+
+// Upload un audio avec image
+export async function uploadAudio(formData) {
+  const res = await fetch('/api/audios/upload', {
+    method: 'POST',
+    body: formData  // PAS de headers ! FormData gère tout
+  });
+  if (!res.ok) throw new Error('Erreur lors de l\'upload');
+  return res.json();
+}
+
+// Supprimer un audio
+export async function deleteAudio(id) {
+  const res = await fetch(`/api/audios/${id}`, { 
+    method: 'DELETE' 
+  });
+  if (!res.ok) throw new Error('Suppression échouée');
+  return res.json();
+}</code></pre>
+
+        <h3>B. Composant React AdminAudios</h3>
+        <pre><code>// pages/AdminAudios.jsx
+import React, { useState, useEffect } from 'react';
+import { getAudios, uploadAudio, deleteAudio } from '../services/api';
+
+const AdminAudios = () => {
+  const [audios, setAudios] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  
+  // Charger les audios
+  useEffect(() => {
+    fetchAudios();
+  }, []);
+  
+  const fetchAudios = async () => {
+    const data = await getAudios();
+    setAudios(data);
+  };
+  
+  // Upload handler
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    
+    // CRUCIAL : Utiliser FormData pour les fichiers
+    const formData = new FormData();
+    formData.append('titre', e.target.titre.value);
+    formData.append('artiste', e.target.artiste.value);
+    formData.append('audio', e.target.audio.files[0]);
+    formData.append('image', e.target.image.files[0]);
+    
+    try {
+      await uploadAudio(formData);
+      fetchAudios();  // Recharger la liste
+      setShowModal(false);
+    } catch (error) {
+      alert('Erreur upload');
+    }
+  };
+  
+  // Affichage avec URLs complètes
+  return (
+    &lt;div&gt;
+      {audios.map(audio => (
+        &lt;div key={audio._id}&gt;
+          &lt;img 
+            src={`http://localhost:5000/${audio.imagePath}`} 
+            alt={audio.titre}
+          /&gt;
+          &lt;audio controls&gt;
+            &lt;source 
+              src={`http://localhost:5000/${audio.audioPath}`} 
+              type={audio.audioMimeType}
+            /&gt;
+          &lt;/audio&gt;
+          &lt;button onClick={() => handleDelete(audio._id)}&gt;
+            Supprimer
+          &lt;/button&gt;
+        &lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+};</code></pre>
+
+        <div class="page-break"></div>
+
+        <h2><span class="emoji">🔄</span>8. FLUX COMPLET DE DONNÉES</h2>
+        
+        <div class="flow-step">
+            <strong>1. SÉLECTION</strong><br>
+            L'utilisateur sélectionne les fichiers audio et image dans son navigateur
+        </div>
+        
+        <div class="flow-step">
+            <strong>2. FORMDATA</strong><br>
+            React crée un objet FormData contenant les fichiers et métadonnées
+        </div>
+        
+        <div class="flow-step">
+            <strong>3. REQUÊTE HTTP</strong><br>
+            Fetch envoie une requête POST vers /api/audios/upload
+        </div>
+        
+        <div class="flow-step">
+            <strong>4. RÉCEPTION EXPRESS</strong><br>
+            Express reçoit la requête et la transmet à Multer
+        </div>
+        
+        <div class="flow-step">
+            <strong>5. STOCKAGE FICHIERS</strong><br>
+            Multer sauvegarde les fichiers dans /uploads et passe les infos à la route
+        </div>
+        
+        <div class="flow-step">
+            <strong>6. SAUVEGARDE MONGODB</strong><br>
+            La route crée un document avec les chemins et métadonnées
+        </div>
+        
+        <div class="flow-step">
+            <strong>7. RÉPONSE AU CLIENT</strong><br>
+            Le backend renvoie un message de succès avec les données
+        </div>
+        
+        <div class="flow-step">
+            <strong>8. MISE À JOUR UI</strong><br>
+            React recharge la liste et affiche le nouvel audio
+        </div>
+        
+        <div class="flow-step">
+            <strong>9. ACCÈS AUX FICHIERS</strong><br>
+            Les fichiers sont accessibles via http://localhost:5000/uploads/...
+        </div>
+
+        <h2><span class="emoji">💡</span>9. POINTS CLÉS À RETENIR</h2>
+        
+        <div class="success-box">
+            <strong>1. Séparation des responsabilités</strong><br>
+            • MongoDB = Métadonnées uniquement (titre, artiste, chemins)<br>
+            • File System = Fichiers physiques (MP3, JPG)<br>
+            • Backend = Logique et validation<br>
+            • Frontend = Interface utilisateur
+        </div>
+        
+        <div class="success-box">
+            <strong>2. FormData est obligatoire</strong><br>
+            Pour envoyer des fichiers, vous DEVEZ utiliser FormData, pas JSON
+        </div>
+        
+        <div class="success-box">
+            <strong>3. Construction des URLs</strong><br>
+            • Stockage : <code>uploads/audios/fichier.mp3</code><br>
+            • Accès : <code>http://localhost:5000/uploads/audios/fichier.mp3</code>
+        </div>
+        
+        <div class="success-box">
+            <strong>4. Ordre de développement</strong><br>
+            Database → Backend → Test Postman → Frontend
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2><span class="emoji">✅</span>10. CHECKLIST DE VALIDATION</h2>
+        
+        <div class="checklist">
+            <h3>Base de données</h3>
+            <label><input type="checkbox"> Collection MongoDB 'audios' créée</label><br>
+            <label><input type="checkbox"> Modèle Mongoose Audio.js avec tous les champs</label><br>
+            <label><input type="checkbox"> Relation avec la collection Users configurée</label>
+            
+            <h3>Backend - Structure</h3>
+            <label><input type="checkbox"> Dossier uploads/audios créé</label><br>
+            <label><input type="checkbox"> Dossier uploads/images créé</label><br>
+            <label><input type="checkbox"> Dossier config avec multerConfig.js</label><br>
+            <label><input type="checkbox"> Routes audios.js créées</label>
+            
+            <h3>Backend - Configuration</h3>
+            <label><input type="checkbox"> Multer configuré avec les bonnes destinations</label><br>
+            <label><input type="checkbox"> Validation des types de fichiers</label><br>
+            <label><input type="checkbox"> Limite de taille configurée</label><br>
+            <label><input type="checkbox"> Middleware express.static dans server.js</label><br>
+            <label><input type="checkbox"> Route /api/audios connectée dans server.js</label>
+            
+            <h3>Tests</h3>
+            <label><input type="checkbox"> Test POST avec Postman réussi</label><br>
+            <label><input type="checkbox"> Fichiers visibles dans les dossiers uploads</label><br>
+            <label><input type="checkbox"> Document créé dans MongoDB</label><br>
+            <label><input type="checkbox"> Test GET retourne la liste</label><br>
+            <label><input type="checkbox"> Test DELETE supprime fichiers et document</label>
+            
+            <h3>Frontend</h3>
+            <label><input type="checkbox"> Services API créés (getAudios, uploadAudio, deleteAudio)</label><br>
+            <label><input type="checkbox"> Composant AdminAudios fonctionnel</label><br>
+            <label><input type="checkbox"> FormData utilisé pour l'upload</label><br>
+            <label><input type="checkbox"> URLs correctes pour affichage (http://localhost:5000/...)</label><br>
+            <label><input type="checkbox"> Rechargement de la liste après upload/delete</label>
+        </div>
+
+        <h2><span class="emoji">❌</span>11. ERREURS COURANTES À ÉVITER</h2>
+        
+        <div class="error-box">
+            <strong>Erreur 1 : Headers incorrects</strong><br>
+            ❌ NE PAS mettre <code>Content-Type: application/json</code> avec FormData<br>
+            ✅ Laisser FormData gérer automatiquement les headers
+        </div>
+        
+        <div class="error-box">
+            <strong>Erreur 2 : Oublier express.static</strong><br>
+            Sans <code>app.use('/uploads', express.static('uploads'))</code>, les fichiers ne sont pas accessibles
+        </div>
+        
+        <div class="error-box">
+            <strong>Erreur 3 : Mauvaises URLs</strong><br>
+            ❌ <code>src="uploads/audios/file.mp3"</code><br>
+            ✅ <code>src="http://localhost:5000/uploads/audios/file.mp3"</code>
+        </div>
+        
+        <div class="error-box">
+            <strong>Erreur 4 : Stocker les fichiers dans MongoDB</strong><br>
+            ❌ Ne jamais stocker les fichiers binaires dans MongoDB<br>
+            ✅ Stocker uniquement les chemins/métadonnées
+        </div>
+
+        <h2><span class="emoji">📈</span>12. AMÉLIORATIONS POSSIBLES</h2>
+        
+        <ul>
+            <li><strong>Stockage Cloud :</strong> AWS S3, Cloudinary pour la production</li>
+            <li><strong>Compression :</strong> Réduire la taille des fichiers avant stockage</li>
+            <li><strong>Streaming :</strong> Implémenter le streaming pour les gros fichiers</li>
+            <li><strong>CDN :</strong> Utiliser un CDN pour servir les fichiers</li>
+            <li><strong>Authentification :</strong> Protéger les routes d'upload</li>
+            <li><strong>Validation avancée :</strong> Vérifier le contenu réel des fichiers</li>
+            <li><strong>Thumbnails :</strong> Générer des miniatures
