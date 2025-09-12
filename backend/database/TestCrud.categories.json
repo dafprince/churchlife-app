@@ -1,0 +1,85 @@
+[{
+  "_id": {
+    "$oid": "68ac9e2d8ab18e5477487dde"
+  },
+  "nom": "Mariage2",
+  "description": "Le mariage a été premièrement institué par Dieu dans l’ordre créationnel, donné par Dieu comme un fondement immuable pour la vie humaine",
+  "imageFileName": "1756143149082-868404425.jpg",
+  "imageOriginalName": "mariage.jpg",
+  "imagePath": "uploads\\images\\1756143149082-868404425.jpg",
+  "imageSize": 11456,
+  "imageMimeType": "image/jpeg",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-08-25T17:32:29.120Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ac9e874529c3526e58c66b"
+  },
+  "nom": "Sacrifice",
+  "description": "Il faut payer le prix",
+  "imageFileName": "1756143239327-783449866.jpg",
+  "imageOriginalName": "mariage.jpg",
+  "imagePath": "uploads\\images\\1756143239327-783449866.jpg",
+  "imageSize": 11456,
+  "imageMimeType": "image/jpeg",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-08-25T17:33:59.357Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ad1f3d4529c3526e58c6ba"
+  },
+  "nom": "Combat",
+  "description": "tout combat doit etre spirituel",
+  "imageFileName": "1756176189103-152156813.png",
+  "imageOriginalName": "bible.png",
+  "imagePath": "uploads\\images\\1756176189103-152156813.png",
+  "imageSize": 137479,
+  "imageMimeType": "image/png",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-08-26T02:43:09.112Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68adf9d64529c3526e58c6ef"
+  },
+  "nom": "sanctification",
+  "description": "ne péchez pas",
+  "imageFileName": "1756232150798-765738507.jpeg",
+  "imageOriginalName": "tÃ©lÃ©chargement.jpeg",
+  "imagePath": "uploads\\images\\1756232150798-765738507.jpeg",
+  "imageSize": 5433,
+  "imageMimeType": "image/jpeg",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-08-26T18:15:50.802Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68b0bd325542771571e1fb5a"
+  },
+  "nom": "Sagesse",
+  "description": "la crainte de Dieu est le commencement de la sagesse",
+  "imageFileName": "1756413234475-887287492.jpg",
+  "imageOriginalName": "sagess23.jpg",
+  "imagePath": "uploads\\images\\1756413234475-887287492.jpg",
+  "imageSize": 588011,
+  "imageMimeType": "image/jpeg",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-08-28T20:33:54.572Z"
+  },
+  "__v": 0
+}]

@@ -1,0 +1,66 @@
+[{
+  "_id": {
+    "$oid": "68a753edb8f5a8eeba40f9ff"
+  },
+  "titre": "Ma première chanson",
+  "artiste": "Mon artiste",
+  "album": "Premier album",
+  "genre": "Pop",
+  "description": "Une super chanson test",
+  "audioFileName": "1755796459034-525040723.mp3",
+  "audioOriginalName": "0820 (1).mp3",
+  "audioPath": "uploads\\audios\\1755796459034-525040723.mp3",
+  "audioSize": 24402994,
+  "audioMimeType": "audio/mpeg",
+  "duration": 0,
+  "imageFileName": "1755796461201-722626626.png",
+  "imageOriginalName": "loisir.png",
+  "imagePath": "uploads\\images\\1755796461201-722626626.png",
+  "imageSize": 13530,
+  "imageMimeType": "image/png",
+  "uploadedBy": {
+    "$oid": "68979387425d91d89f0fab39"
+  },
+  "playCount": 0,
+  "isActive": true,
+  "uploadedAt": {
+    "$date": "2025-08-21T17:14:21.264Z"
+  },
+  "lastModified": {
+    "$date": "2025-08-21T17:14:21.265Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a8aaa97d535385f01f81d9"
+  },
+  "titre": "bethel",
+  "artiste": "apotre",
+  "album": "prediction",
+  "genre": "",
+  "description": "",
+  "audioFileName": "1755884201332-174417889.mp3",
+  "audioOriginalName": "0820 (1).mp3",
+  "audioPath": "uploads\\audios\\1755884201332-174417889.mp3",
+  "audioSize": 24402994,
+  "audioMimeType": "audio/mpeg",
+  "duration": 0,
+  "imageFileName": "1755884201511-143855812.png",
+  "imageOriginalName": "travail.png",
+  "imagePath": "uploads\\images\\1755884201511-143855812.png",
+  "imageSize": 8079,
+  "imageMimeType": "image/png",
+  "uploadedBy": {
+    "$oid": "68979387425d91d89f0fab39"
+  },
+  "playCount": 0,
+  "isActive": true,
+  "uploadedAt": {
+    "$date": "2025-08-22T17:36:41.516Z"
+  },
+  "lastModified": {
+    "$date": "2025-08-22T17:36:41.516Z"
+  },
+  "__v": 0
+}]

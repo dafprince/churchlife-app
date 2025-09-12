@@ -1,0 +1,57 @@
+[{
+  "_id": {
+    "$oid": "68979387425d91d89f0fab39"
+  },
+  "name": "Dafonseca",
+  "email": "princedafonse@gmail.com",
+  "age": 29
+},
+{
+  "_id": {
+    "$oid": "68979387425d91d89f0fab3a"
+  },
+  "name": "Kikamgou",
+  "email": "jhon@gmail.com",
+  "age": 31
+},
+{
+  "_id": {
+    "$oid": "68979387425d91d89f0fab3b"
+  },
+  "name": "Makaya2",
+  "email": "gloire@gmail.com",
+  "age": 26
+},
+{
+  "_id": {
+    "$oid": "68979387425d91d89f0fab3c"
+  },
+  "name": "Jeny",
+  "email": "Jeny@gmail.com",
+  "age": 23
+},
+{
+  "_id": {
+    "$oid": "68979387425d91d89f0fab3d"
+  },
+  "name": "Smith2",
+  "email": "Smith@gmail.com",
+  "age": 30
+},
+{
+  "_id": {
+    "$oid": "689e941fdd176ad8d346c755"
+  },
+  "name": "roger",
+  "email": "gloire@gmail.com",
+  "age": 30
+},
+{
+  "_id": {
+    "$oid": "68a68912326e5bf0b1a64448"
+  },
+  "name": "mobile",
+  "email": "mobile@gmail.com",
+  "age": 53,
+  "__v": 0
+}]

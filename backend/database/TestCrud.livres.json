@@ -1,0 +1,128 @@
+[{
+  "_id": {
+    "$oid": "68acd2574529c3526e58c6b2"
+  },
+  "titre": "L’AMOUR AU-DELÀ DE TOUTE LIMITE",
+  "auteur": "Il faut payer le prix",
+  "description": "Nick Vujicic",
+  "categories": [
+    {
+      "$oid": "68ac9e2d8ab18e5477487dde"
+    }
+  ],
+  "pdfFileName": "1756156503305-614815241.pdf",
+  "pdfOriginalName": "L'amour_au_dÃ©lÃ _de_toute_limite_Nick_et_Kanae_Vujucic[1].pdf",
+  "pdfPath": "uploads\\livres\\1756156503305-614815241.pdf",
+  "pdfSize": 2637210,
+  "pdfMimeType": "application/pdf",
+  "imageFileName": "1756156503356-375147249.jpeg",
+  "imageOriginalName": "livres.jpeg",
+  "imagePath": "uploads\\images\\1756156503356-375147249.jpeg",
+  "imageSize": 4724,
+  "imageMimeType": "image/jpeg",
+  "uploadedBy": {
+    "$oid": "68979387425d91d89f0fab3a"
+  },
+  "downloadCount": 0,
+  "isActive": true,
+  "uploadedAt": {
+    "$date": "2025-08-25T21:15:03.376Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68adfdbf4529c3526e58c700"
+  },
+  "titre": "payer le prix",
+  "auteur": "prince",
+  "description": "mourrir a vous",
+  "categories": [
+    {
+      "$oid": "68adf9d64529c3526e58c6ef"
+    }
+  ],
+  "pdfFileName": "1756233150928-24104719.pdf",
+  "pdfOriginalName": "PersecutÃ©_pour_l_amour_de_Dieu__Igor_Sauchuk[1].pdf",
+  "pdfPath": "uploads\\livres\\1756233150928-24104719.pdf",
+  "pdfSize": 4316826,
+  "pdfMimeType": "application/pdf",
+  "imageFileName": "1756233151065-408088525.jpg",
+  "imageOriginalName": "mariage.jpg",
+  "imagePath": "uploads\\images\\1756233151065-408088525.jpg",
+  "imageSize": 11456,
+  "imageMimeType": "image/jpeg",
+  "uploadedBy": {
+    "$oid": "68979387425d91d89f0fab3a"
+  },
+  "downloadCount": 0,
+  "isActive": true,
+  "uploadedAt": {
+    "$date": "2025-08-26T18:32:31.069Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ae004f4529c3526e58c71e"
+  },
+  "titre": "titre",
+  "auteur": "auteur",
+  "description": "description",
+  "categories": [
+    {
+      "$oid": "68ad1f3d4529c3526e58c6ba"
+    }
+  ],
+  "pdfFileName": "1756233807319-337098982.pdf",
+  "pdfOriginalName": "J ai choisi d aimer _ Stormie Omartian.pdf",
+  "pdfPath": "uploads\\livres\\1756233807319-337098982.pdf",
+  "pdfSize": 2106819,
+  "pdfMimeType": "application/pdf",
+  "imageFileName": "1756233807348-671871970.jpeg",
+  "imageOriginalName": "tÃ©lÃ©chargement.jpeg",
+  "imagePath": "uploads\\images\\1756233807348-671871970.jpeg",
+  "imageSize": 5433,
+  "imageMimeType": "image/jpeg",
+  "uploadedBy": {
+    "$oid": "68979387425d91d89f0fab3a"
+  },
+  "downloadCount": 0,
+  "isActive": true,
+  "uploadedAt": {
+    "$date": "2025-08-26T18:43:27.352Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ae0d6ebdf36df270cb406b"
+  },
+  "titre": "test",
+  "auteur": "teé",
+  "description": "désc",
+  "categories": [
+    {
+      "$oid": "68ac9e2d8ab18e5477487dde"
+    }
+  ],
+  "pdfFileName": "1756237166947-678822716.pdf",
+  "pdfOriginalName": "J ai choisi d aimer _ Stormie Omartian.pdf",
+  "pdfPath": "uploads\\livres\\1756237166947-678822716.pdf",
+  "pdfSize": 2106819,
+  "pdfMimeType": "application/pdf",
+  "imageFileName": "1756237166984-234021588.jpeg",
+  "imageOriginalName": "tÃ©lÃ©chargement.jpeg",
+  "imagePath": "uploads\\images\\1756237166984-234021588.jpeg",
+  "imageSize": 5433,
+  "imageMimeType": "image/jpeg",
+  "uploadedBy": {
+    "$oid": "68979387425d91d89f0fab3a"
+  },
+  "downloadCount": 0,
+  "isActive": true,
+  "uploadedAt": {
+    "$date": "2025-08-26T19:39:27.007Z"
+  },
+  "__v": 0
+}]
