@@ -130,3 +130,9 @@ export async function incrementDownload(id) {
   if (!res.ok) throw new Error('Erreur');
   return res.json();
 }
+
+// Fonction pour générer l'URL complète des images
+export function getImageUrl(imagePath) {
+  const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  return `${BASE_URL}/${imagePath}`;
+}

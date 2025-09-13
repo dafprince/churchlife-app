@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { styles } from "../css/style";
-import { getCategories, createCategory, deleteCategory } from "../services/api";
+import { getCategories, createCategory, deleteCategory, getImageUrl } from "../services/api";
 
 const CategorieLivresPage = () => {
   // États pour les catégories
@@ -153,7 +153,7 @@ const CategorieLivresPage = () => {
               >
                 <td style={styles.td}>
                   <img 
-                    src={`http://localhost:5000/${cat.imagePath}`}
+                    src={getImageUrl(cat.imagePath)}
                     alt={cat.nom} 
                     style={{ 
                       width: '60px', 
