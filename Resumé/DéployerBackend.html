@@ -475,9 +475,80 @@ git push</pre>
             8. Développement continu = git push → auto-deploy
         </div>
 
+        <h2>🛡️ Étape 5 : Éviter la mise en veille (Plan gratuit)</h2>
+
+        <div class="warning">
+            <strong>⚠️ Problème du plan gratuit :</strong><br>
+            Render met votre serveur en veille après 15 minutes d'inactivité, causant des erreurs 502 Bad Gateway au réveil.
+        </div>
+
+        <h3><span class="step-number">5.1</span>Ajouter un endpoint de santé</h3>
+        
+        <p><strong>Dans votre server.js, ajoutez cette route :</strong></p>
+        <pre>// Endpoint de santé pour UptimeRobot
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'Server is alive', 
+        timestamp: new Date(),
+        message: 'ChurchLife Backend is running' 
+    });
+});</pre>
+
+        <div class="important">
+            <strong>⚠️ Placement important :</strong> Ajoutez cette route au même niveau que vos autres routes, pas à l'intérieur d'une autre route.
+        </div>
+
+        <h3><span class="step-number">5.2</span>Déployer la modification</h3>
+        <pre>git add .
+git commit -m "Add health endpoint for UptimeRobot"
+git push</pre>
+
+        <h3><span class="step-number">5.3</span>Tester l'endpoint</h3>
+        <p><strong>Dans votre navigateur, testez :</strong></p>
+        <pre>https://votre-app.onrender.com/health</pre>
+        
+        <p><strong>Réponse attendue :</strong></p>
+        <pre>{"status":"Server is alive","timestamp":"2025-09-13T...","message":"ChurchLife Backend is running"}</pre>
+
+        <h3><span class="step-number">5.4</span>Configurer UptimeRobot (Gratuit)</h3>
+        
+        <ol>
+            <li><strong>Créer un compte :</strong> https://uptimerobot.com → "Free Sign Up"</li>
+            <li><strong>Ajouter un monitor :</strong> "+ Add New Monitor"</li>
+            <li><strong>Configuration :</strong>
+                <ul>
+                    <li>Type : HTTP(s)</li>
+                    <li>URL : <code>https://votre-app.onrender.com/health</code></li>
+                    <li>Interval : 5 minutes</li>
+                </ul>
+            </li>
+            <li><strong>Créer le monitor</strong></li>
+        </ol>
+
+        <div class="success">
+            <strong>✅ Résultat :</strong><br>
+            • UptimeRobot surveille votre serveur toutes les 5 minutes<br>
+            • Votre serveur ne se met plus jamais en veille<br>
+            • Plus d'erreurs 502 Bad Gateway<br>
+            • Service disponible 24h/24
+        </div>
+
+        <h3><span class="step-number">5.5</span>Vérification</h3>
+        <p><strong>Dans UptimeRobot, vous devriez voir :</strong></p>
+        <ul>
+            <li>Status : "Up" (vert)</li>
+            <li>Uptime : 100%</li>
+            <li>Response time : quelques millisecondes</li>
+            <li>Last check : heure récente</li>
+        </ul>
+
+        <div class="warning">
+            <strong>⚠️ Alternative :</strong> Pour éviter ces configurations, vous pouvez opter pour un plan payant Render (7$/mois) qui n'a pas de mise en veille.
+        </div>
+
         <div class="success">
             <h3>🎉 Félicitations !</h3>
-            <p>Votre backend est maintenant dans le cloud et se met à jour automatiquement à chaque push GitHub !</p>
+            <p>Votre backend est maintenant dans le cloud, se met à jour automatiquement et reste toujours disponible !</p>
         </div>
 
         <hr style="margin: 40px 0; border: 2px solid #3498db;">
