@@ -43,8 +43,19 @@ app.use('/api/audios', audiosRouter);
 // AJOUTEZ CES DEUX LIGNES
 app.use('/api/categories', categoriesRouter);
 app.use('/api/livres', livresRouter);
+
+// Route principale
 app.get('/', (req, res) => {
   res.send('Serveur Express + Mongo : OK cest parfait');
+});
+
+// Endpoint de santé pour UptimeRobot
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'Server is alive', 
+        timestamp: new Date(),
+        message: 'ChurchLife Backend is running' 
+    });
 });
 
 // Connexion MongoDB
