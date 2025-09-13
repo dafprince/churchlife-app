@@ -9,11 +9,11 @@ class PDFViewerPdfx extends StatefulWidget {
   final String author;
 
   const PDFViewerPdfx({
-    Key? key,
+    super.key,
     required this.pdfUrl,
     required this.bookTitle,
     required this.author,
-  }) : super(key: key);
+  });
 
   @override
   State<PDFViewerPdfx> createState() => _PDFViewerPdfxState();

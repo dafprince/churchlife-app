@@ -230,11 +230,11 @@ class AudioListItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const AudioListItem({
-    Key? key,
+    super.key,
     required this.audio,
     required this.isPlaying,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +250,7 @@ class AudioListItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
+            SizedBox(
               width: 50,
               height: 50,
               child: ClipRRect(
@@ -356,14 +356,14 @@ class AudioPlayerBottomBar extends StatelessWidget {
   final Function(Duration) onSeek;
 
   const AudioPlayerBottomBar({
-    Key? key,
+    super.key,
     required this.playerState,
     required this.onPlayPause,
     required this.onNext,
     required this.onPrevious,
     required this.onClose,
     required this.onSeek,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -419,7 +419,7 @@ class AudioPlayerBottomBar extends StatelessWidget {
           ),
 
           // Contrôles principaux
-          Container(
+          SizedBox(
             height: 80,
             child: Row(
               children: [

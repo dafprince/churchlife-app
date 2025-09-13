@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/features/livres/presentation/widgets/pdf_viewer_page.dart'
     show PDFViewerPage, PDFViewerPdfx;
-import 'package:url_launcher/url_launcher.dart';
 import '../bloc/livre_bloc.dart';
 import '../bloc/livre_event.dart';
 import '../bloc/livre_state.dart';
