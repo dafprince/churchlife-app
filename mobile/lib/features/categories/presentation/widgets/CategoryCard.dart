@@ -71,13 +71,11 @@ class _CategoryCardState extends State<CategoryCard>
                     SizedBox(
                       height: 140,
                       child: Image.network(
-                        'http://10.0.2.2:5000/uploads/images/${widget.category.imageFileName}',
+                        widget.category.getImageUrl(),
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           print('Erreur image: $error');
-                          print(
-                            'URL: http://10.0.2.2:5000/uploads/images/${widget.category.imageFileName}',
-                          );
+                          print(widget.category.getImageUrl());
                           return Container(
                             color: Colors.grey[300],
                             child: Icon(
