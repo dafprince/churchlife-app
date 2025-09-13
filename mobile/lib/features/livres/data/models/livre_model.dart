@@ -1,3 +1,5 @@
+import '../../../../core/api_constants.dart';
+
 class LivreModel {
   final String id;
   final String titre;
@@ -50,11 +52,13 @@ class LivreModel {
   }
 
   String getImageUrl() {
-    return 'http://10.0.2.2:5000/uploads/images/$imageFileName';
+    final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
+    return '$baseUrl/uploads/images/$imageFileName';
   }
 
   String getPdfUrl() {
-    return 'http://10.0.2.2:5000/uploads/livres/$pdfFileName';
+    final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
+    return '$baseUrl/uploads/livres/$pdfFileName';
   }
 
   // Méthode utilitaire pour obtenir les noms des catégories

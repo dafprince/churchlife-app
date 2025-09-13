@@ -1,3 +1,5 @@
+import '../../../../core/api_constants.dart';
+
 /// Modèle pour représenter une catégorie
 class CategoryModel {
   final String id;
@@ -23,5 +25,10 @@ class CategoryModel {
       imageFileName: json['imageFileName'] ?? '',
       isActive: json['isActive'] ?? true,
     );
+  }
+  // IMAGE POINTER VERS LE SERVEUR PRODUCTION PAS LOCAL
+  String getImageUrl() {
+    final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
+    return '$baseUrl/uploads/images/$imageFileName';
   }
 }
