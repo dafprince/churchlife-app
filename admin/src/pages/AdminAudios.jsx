@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getAudios, uploadAudio, deleteAudio } from '../services/api';
+import { getAudios, uploadAudio, deleteAudio, getImageUrl } from '../services/api';
 import { audioStyles , modalStyles  } from '../css/style';
 import { FaTrash, FaPlay , FaPlus } from 'react-icons/fa';
 
 const AdminAudios = () => {
   const [audios, setAudios] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [uploading, setUploading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   
   // Charger les audios au montage
@@ -46,13 +45,12 @@ const AdminAudios = () => {
         <p style={{ color: '#6b7280' }}>
           {audios.length} audio(s) disponible(s)
         </p>
-         {/* AJOUTEZ CE BOUTON ICI */}
-  <button 
-    style={modalStyles.addBtn}
-    onClick={() => setShowModal(true)}
-  >
-    <FaPlus /> Ajouter un Audio
-  </button>
+        <button 
+          style={modalStyles.addBtn}
+          onClick={() => setShowModal(true)}
+        >
+          <FaPlus /> Ajouter un Audio
+        </button>
       </div>
       
       {/* Grille des audios */}
@@ -72,7 +70,6 @@ const AdminAudios = () => {
         </div>
       )}
 
-       {/* AJOUTEZ LE MODAL ICI, JUSTE AVANT </div> */}
       <UploadModal 
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -89,9 +86,9 @@ const AdminAudios = () => {
 const AudioCard = ({ audio, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Construire l'URL de l'image
-  const imageUrl = `http://localhost:5000/${audio.imagePath}`;
-  const audioUrl = `http://localhost:5000/${audio.audioPath}`;
+  // Construire les URLs avec getImageUrl
+  const imageUrl = getImageUrl(audio.imagePath);
+  const audioUrl = getImageUrl(audio.audioPath);
   
   return (
     <div 
@@ -140,7 +137,8 @@ const AudioCard = ({ audio, onDelete }) => {
     </div>
   );
 };
-// Composant Modal (ajoutez AVANT export default AdminAudios)
+
+// Composant Modal
 const UploadModal = ({ isOpen, onClose, onUploadSuccess }) => {
   const [formData, setFormData] = useState({
     titre: '',
