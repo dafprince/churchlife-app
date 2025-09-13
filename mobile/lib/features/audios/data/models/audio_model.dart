@@ -1,3 +1,5 @@
+import '../../../../core/api_constants.dart';
+
 class AudioModel {
   final String id;
   final String titre;
@@ -78,11 +80,14 @@ class AudioModel {
 
   // Méthodes utilitaires pour construire les URLs
   String getImageUrl() {
-    return 'http://10.0.2.2:5000/uploads/images/$imageFileName';
+    final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
+    return '$baseUrl/uploads/images/$imageFileName';
   }
 
+  // ✅ APRÈS (utilise ApiConstants)
   String getAudioUrl() {
-    return 'http://10.0.2.2:5000/uploads/audios/$audioFileName';
+    final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
+    return '$baseUrl/uploads/audios/$audioFileName';
   }
 
   // Méthode pour formater la durée
