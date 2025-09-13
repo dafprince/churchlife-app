@@ -3,7 +3,7 @@ import { styles, dashboardStyles, bookStyles, modalStyles } from '../css/style';
 import { 
   FaList, FaTh, FaSearch, FaPlus, FaTrash, FaDownload, FaFilePdf, FaBook, FaTimes
 } from 'react-icons/fa';
-import { getLivres, deleteLivre, getCategories, uploadLivre } from '../services/api';
+import { getLivres, deleteLivre, getCategories, uploadLivre, getImageUrl } from '../services/api';
 
 export default function AdminBooks() {
   // ========== ÉTATS ==========
@@ -11,7 +11,7 @@ export default function AdminBooks() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [viewMode, setViewMode] = useState('table'); // 'table' | 'grid'
+  const [viewMode, setViewMode] = useState('table');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selected, setSelected] = useState([]);
   
@@ -29,8 +29,8 @@ export default function AdminBooks() {
       getLivres(),
       getCategories()
     ]);
-    console.log('Livres chargés:', livresData); // AJOUT DEBUG
-    console.log('Catégories dans livre:', livresData[0]?.categories); // AJOUT DEBUG
+    console.log('Livres chargés:', livresData);
+    console.log('Catégories dans livre:', livresData[0]?.categories);
     setBooks(livresData);
     setCategories(categoriesData);
   } catch (error) {
@@ -42,7 +42,6 @@ export default function AdminBooks() {
 
   // ========== CALCUL DES CATÉGORIES POUR LE FILTRE ==========
   const categoryOptions = useMemo(() => {
-    // Utiliser les vraies catégories chargées depuis la DB
     const options = ['all'];
     categories.forEach(cat => {
       options.push(cat.nom);
@@ -55,7 +54,7 @@ export default function AdminBooks() {
     total: books.length,
     published: books.filter(b => b.isActive).length,
     drafts: books.filter(b => !b.isActive).length,
-    totalViews: 0, // À implémenter si vous avez un compteur de vues
+    totalViews: 0,
     totalDownloads: books.reduce((a, b) => a + (b.downloadCount || 0), 0),
   }), [books]);
 
@@ -69,7 +68,6 @@ const filtered = books.filter(b => {
   if (selectedCategory === 'all') {
     matchesCat = true;
   } else {
-    // Si les catégories sont peuplées
     if (b.categories && b.categories.length > 0) {
       if (typeof b.categories[0] === 'object') {
         matchesCat = b.categories.some(cat => cat.nom === selectedCategory);
@@ -115,7 +113,6 @@ const filtered = books.filter(b => {
     if (!window.confirm(`Supprimer ${selected.length} livre(s) ?`)) return;
     
     try {
-      // Supprimer un par un (ou créer une route bulk delete)
       for (const id of selected) {
         await deleteLivre(id);
       }
@@ -127,16 +124,13 @@ const filtered = books.filter(b => {
   };
 
   // ========== HELPER : Obtenir les noms des catégories d'un livre ==========
-  // Vers la ligne 120, remplacez la fonction getCategoryNames existante par :
 const getCategoryNames = (bookCategories) => {
   if (!bookCategories || bookCategories.length === 0) return 'Non classé';
   
-  // Si les catégories sont déjà peuplées (objets avec nom)
   if (typeof bookCategories[0] === 'object' && bookCategories[0].nom) {
     return bookCategories.map(cat => cat.nom).join(', ');
   }
   
-  // Si ce sont des IDs
   const names = bookCategories.map(catId => {
     const cat = categories.find(c => c._id === catId);
     return cat ? cat.nom : '';
@@ -185,9 +179,8 @@ const getCategoryNames = (bookCategories) => {
         </div>
       </div>
 
-      {/* ========== TOOLBAR (Recherche, Filtres, Vue) ========== */}
+      {/* ========== TOOLBAR ========== */}
       <div style={bookStyles.toolbar}>
-        {/* Barre de recherche */}
         <div style={bookStyles.searchWrapper}>
           <FaSearch style={bookStyles.searchIcon} />
           <input
@@ -198,7 +191,6 @@ const getCategoryNames = (bookCategories) => {
           />
         </div>
 
-        {/* Filtre par catégorie */}
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
@@ -211,7 +203,6 @@ const getCategoryNames = (bookCategories) => {
           ))}
         </select>
 
-        {/* Toggle vue table/grille */}
         <div style={bookStyles.viewToggleWrap}>
           <button
             onClick={() => setViewMode('table')}
@@ -235,7 +226,6 @@ const getCategoryNames = (bookCategories) => {
           </button>
         </div>
 
-        {/* Bouton suppression multiple */}
         {selected.length > 0 && (
           <button onClick={handleBulkDelete} style={bookStyles.bulkDeleteBtn}>
             <FaTrash style={{ marginRight: 6 }} />
@@ -277,11 +267,10 @@ const getCategoryNames = (bookCategories) => {
                     />
                   </td>
 
-                  {/* Titre avec image */}
                   <td style={styles.td}>
                     <div style={bookStyles.titleCellWrap}>
                       <img
-                        src={`http://localhost:5000/${b.imagePath}`}
+                        src={getImageUrl(b.imagePath)}
                         alt={b.titre}
                         style={bookStyles.tableMiniCover}
                         onError={(e) => { 
@@ -297,34 +286,29 @@ const getCategoryNames = (bookCategories) => {
 
                   <td style={styles.td}>{b.auteur}</td>
 
-                  {/* Catégories */}
                   <td style={styles.td}>
                     <span style={{ ...bookStyles.badge, ...bookStyles.badgeCategory }}>
                       {getCategoryNames(b.categories)}
                     </span>
                   </td>
 
-                  {/* Taille du fichier */}
                   <td style={styles.td}>
                     {b.pdfSize ? `${(b.pdfSize / 1024 / 1024).toFixed(1)} MB` : 'N/A'}
                   </td>
 
-                  {/* Nombre de téléchargements */}
                   <td style={styles.td}>
                     <div style={bookStyles.statsCell}>
                       <FaDownload style={{ marginRight: 6 }} /> {b.downloadCount || 0}
                     </div>
                   </td>
 
-                  {/* Date d'ajout */}
                   <td style={styles.td}>
                     {new Date(b.uploadedAt).toLocaleDateString('fr-FR')}
                   </td>
 
-                  {/* Actions */}
                   <td style={styles.tdCenter}>
                     <a 
-                      href={`http://localhost:5000/${b.pdfPath}`} 
+                      href={getImageUrl(b.pdfPath)} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       style={{ textDecoration: 'none' }}
@@ -379,7 +363,7 @@ const getCategoryNames = (bookCategories) => {
           categories={categories}
           onClose={() => setShowUploadModal(false)}
           onSuccess={() => {
-            loadData(); // Recharger les livres
+            loadData();
             setShowUploadModal(false);
           }}
         />
@@ -392,16 +376,13 @@ const getCategoryNames = (bookCategories) => {
 function GridCard({ book, categories, onDelete }) {
   const [hover, setHover] = useState(false);
   
-  // Helper pour obtenir les noms des catégories
  const getCategoryNames = (bookCategories) => {
     if (!bookCategories || bookCategories.length === 0) return 'Non classé';
     
-    // Si les catégories sont déjà peuplées (objets avec nom)
     if (typeof bookCategories[0] === 'object' && bookCategories[0].nom) {
       return bookCategories.map(cat => cat.nom).join(', ');
     }
     
-    // Si ce sont des IDs - UTILISER categories passé en props
     const names = bookCategories.map(catId => {
       const cat = categories.find(c => c._id === catId);
       return cat ? cat.nom : '';
@@ -419,10 +400,9 @@ function GridCard({ book, categories, onDelete }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {/* Image de couverture */}
       <div style={bookStyles.coverWrap}>
         <img
-          src={`http://localhost:5000/${book.imagePath}`}
+          src={getImageUrl(book.imagePath)}
           alt={book.titre}
           style={bookStyles.coverImg}
           onError={(e) => { 
@@ -436,7 +416,6 @@ function GridCard({ book, categories, onDelete }) {
         </div>
       </div>
 
-      {/* Corps de la carte */}
       <div style={bookStyles.cardBody}>
         <div style={bookStyles.cardTitle} title={book.titre}>{book.titre}</div>
         <div style={bookStyles.cardAuthor}>{book.auteur}</div>
@@ -448,7 +427,7 @@ function GridCard({ book, categories, onDelete }) {
           </span>
           <div style={bookStyles.cardActions}>
             <a 
-              href={`http://localhost:5000/${book.pdfPath}`} 
+              href={getImageUrl(book.pdfPath)} 
               target="_blank" 
               rel="noopener noreferrer"
             >
@@ -502,7 +481,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
     data.append('auteur', formData.auteur);
     data.append('description', formData.description);
     
-    // Ajouter les catégories
     formData.categories.forEach(catId => {
       data.append('categories', catId);
     });
@@ -541,7 +519,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
         <h2 style={modalStyles.modalTitle}>Ajouter un Livre</h2>
         
         <form onSubmit={handleSubmit}>
-          {/* Titre */}
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Titre *</label>
             <input
@@ -553,7 +530,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
             />
           </div>
 
-          {/* Auteur */}
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Auteur *</label>
             <input
@@ -565,7 +541,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
             />
           </div>
 
-          {/* Description */}
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Description</label>
             <input
@@ -576,7 +551,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
             />
           </div>
 
-          {/* Catégories (checkboxes) */}
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Catégories *</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '8px' }}>
@@ -593,7 +567,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
             </div>
           </div>
 
-          {/* Fichier PDF */}
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Fichier PDF *</label>
             <input
@@ -604,7 +577,6 @@ function UploadBookModal({ categories, onClose, onSuccess }) {
             />
           </div>
 
-          {/* Image de couverture */}
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Image de couverture *</label>
             <input
