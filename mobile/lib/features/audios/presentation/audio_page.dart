@@ -218,7 +218,8 @@ class _AudioPageState extends State<AudioPage> {
 
   @override
   void dispose() {
-    audioManager.dispose();
+    // Reset au lieu de dispose car c'est un Singleton
+    audioManager.reset();
     super.dispose();
   }
 }

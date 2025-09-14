@@ -6,39 +6,64 @@ class AudioPlayerManager {
   factory AudioPlayerManager() => _instance;
   AudioPlayerManager._internal();
 
-  final AudioPlayer _player = AudioPlayer();
+  AudioPlayer? _player;
   AudioModel? currentAudio;
 
-  AudioPlayer get player => _player;
+  AudioPlayer get player {
+    _player ??= AudioPlayer(); // Créé uniquement si null
+    return _player!;
+  }
 
   Future<void> playAudio(AudioModel audio) async {
     try {
+      // Si c'est le même audio ET qu'il est en pause, reprendre
+      if (currentAudio?.id == audio.id &&
+          player.processingState != ProcessingState.idle) {
+        await resume();
+        return;
+      }
+
+      // Sinon, charger le nouvel audio
       currentAudio = audio;
-      await _player.setUrl(audio.getAudioUrl());
-      await _player.play();
+      await player.setUrl(audio.getAudioUrl());
+      await player.play();
     } catch (e) {
       print('Erreur lecture audio: $e');
     }
   }
 
   Future<void> pause() async {
-    await _player.pause();
+    await player.pause();
   }
 
   Future<void> resume() async {
-    await _player.play();
+    await player.play();
   }
 
   Future<void> stop() async {
-    await _player.stop();
+    await player.stop();
     currentAudio = null;
   }
 
   Future<void> seek(Duration position) async {
-    await _player.seek(position);
+    await player.seek(position);
   }
 
-  void dispose() {
-    _player.dispose();
+  // NOUVEAU : Reset au lieu de dispose pour Singleton
+  Future<void> reset() async {
+    try {
+      await player.stop();
+      await player.seek(Duration.zero);
+      currentAudio = null;
+    } catch (e) {
+      print('Erreur reset audio: $e');
+    }
+  }
+
+  // NOUVEAU : Dispose complet (seulement quand app se ferme)
+  Future<void> disposeCompletely() async {
+    await _player?.dispose();
+    _player = null;
+    currentAudio = null;
   }
 }
