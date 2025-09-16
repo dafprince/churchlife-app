@@ -46,6 +46,7 @@ dependencies:
   just_audio: ^0.10.5
   audio_service: ^0.18.18
   rxdart: ^0.28.0
+  flutter_launcher_icons: ^0.14.4
  
 
 dev_dependencies:
@@ -69,10 +70,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/pray.png"
+
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/icons/pray.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
