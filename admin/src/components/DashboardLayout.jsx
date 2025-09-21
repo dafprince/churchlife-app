@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AdminUsers from '../pages/AdminUsers';
 import { dashboardStyles } from '../css/style';
-import { FaUsers, FaMusic, FaBook } from 'react-icons/fa';
+import { FaUsers, FaMusic, FaBook , FaBullhorn  } from 'react-icons/fa';
 import { useEffect } from 'react';  // Ajoutez useEffect
 import { getUsers, getAudios } from '../services/api';
 import AdminAudios from '../pages/AdminAudios';  // Ajoutez cette ligne
