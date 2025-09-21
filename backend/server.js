@@ -9,6 +9,8 @@ const audiosRouter = require('./routes/audios');
 // Ajoutez ces deux lignes avec vos autres imports
 const categoriesRouter = require('./routes/categories');
 const livresRouter = require('./routes/livres');
+//ajout
+const annoncesRouter = require('./routes/annonces');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,6 +45,9 @@ app.use('/api/audios', audiosRouter);
 // AJOUTEZ CES DEUX LIGNES
 app.use('/api/categories', categoriesRouter);
 app.use('/api/livres', livresRouter);
+//ajout
+app.use('/api/annonces', annoncesRouter);
+
 
 // Route principale
 app.get('/', (req, res) => {
