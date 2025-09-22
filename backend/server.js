@@ -50,9 +50,7 @@ app.use('/api/annonces', annoncesRouter);
 
 
 // Route principale
-app.get('/api/annonces/test', (req, res) => {
-  res.json({ message: 'Route annonces test OK' });
-});
+
 app.get('/', (req, res) => {
   res.send('Serveur Express + Mongo : OK cest parfait');
 });

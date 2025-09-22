@@ -1,45 +1,55 @@
 const express = require('express');
 const router = express.Router();
 const Annonce = require('../models/Annonce');
+const upload = require('../config/multerConfig'); // si tu veux uploader l’image en local
 
-// POST : Ajouter une annonce
-router.post('/', async (req, res) => {
+// Route POST pour créer annonce avec upload d'image
+router.post('/upload', upload.single('image'), async (req, res) => {
   try {
-    const { image, texte } = req.body;
-
-    if (!image || !texte) {
-      return res.status(400).json({ error: 'Image et texte sont requis' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'Image requise !' });
+    }
+    if (!req.body.texte) {
+      return res.status(400).json({ message: 'Texte requis !' });
     }
 
-    const annonce = new Annonce({ image, texte });
-    const savedAnnonce = await annonce.save();
+    // Chemin image locale (ex: "uploads/images/xyz.png")
+    const newAnnonce = new Annonce({
+      image: req.file.path,
+      texte: req.body.texte
+    });
 
-    res.status(201).json(savedAnnonce);
+    const saved = await newAnnonce.save();
+    res.status(201).json({ message: 'Annonce créée !', annonce: saved });
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur lors de la création' });
+    res.status(500).json({ message: 'Erreur lors de création annonce', error: error.message });
   }
 });
 
-// DELETE : Supprimer une annonce par ID
-router.delete('/:id', async (req, res) => {
-  try {
-    const deleted = await Annonce.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ error: 'Annonce non trouvée' });
-    }
-    res.json({ message: 'Annonce supprimée avec succès' });
-  } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur lors de la suppression' });
-  }
-});
-
-// Récupérer toutes les annonces
+// Route GET pour toutes les annonces
 router.get('/', async (req, res) => {
   try {
-    const annonces = await Annonce.find(); // sans filtre : tout
+    // optionnel : trier par date
+    const annonces = await Annonce.find().sort({ createdAt: -1 });
     res.json(annonces);
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur lors de la récupération des annonces' });
+    res.status(500).json({ message: 'Erreur récupération annonces', error: error.message });
+  }
+});
+
+// Route DELETE pour supprimer annonce
+router.delete('/:id', async (req, res) => {
+  try {
+    const annonce = await Annonce.findById(req.params.id);
+    if (!annonce) {
+      return res.status(404).json({ message: 'Annonce non trouvée' });
+    }
+    // Si besoin, supprimer le fichier image en local (optionnel)
+    // fs.unlinkSync(annonce.image);
+    await Annonce.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Annonce supprimée' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur suppression', error: error.message });
   }
 });
 
