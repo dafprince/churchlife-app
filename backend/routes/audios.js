@@ -1,58 +1,54 @@
-// routes/audios.js
 const express = require('express');
 const router = express.Router();
 const Audio = require('../models/Audio');
 const upload = require('../config/multerConfig');
-const fs = require('fs');  // ← AJOUTEZ CETTE LIGNE il permet de supprimer les supprimer dans les dossier sinon ca va pas le faire
+const fs = require('fs');  // Pour supprimer les fichiers physiques
 
-// Route POST pour upload audio + image
+// ============================================
+// POST - Upload audio + image + association églises
+// ============================================
 router.post('/upload', upload.fields([
   { name: 'audio', maxCount: 1 },
   { name: 'image', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Vérifier que les deux fichiers sont présents
+    // Vérifier présence fichiers audio + image
     if (!req.files.audio || !req.files.image) {
-      return res.status(400).json({ 
-        message: 'Audio et image sont requis' 
-      });
+      return res.status(400).json({ message: 'Audio et image sont requis' });
     }
 
-    // Récupérer les fichiers uploadés
     const audioFile = req.files.audio[0];
     const imageFile = req.files.image[0];
 
-    // Créer le nouveau document audio
+    // Récupérer la liste d'ID des églises liées (string ou tableau)
+    let eglisesArray = [];
+    if (req.body.eglises) {
+      eglisesArray = typeof req.body.eglises === 'string' ? [req.body.eglises] : req.body.eglises;
+    }
+
+    // Création du nouvel audio avec relations
     const newAudio = new Audio({
-      // Infos de base (depuis le formulaire)
       titre: req.body.titre,
       artiste: req.body.artiste,
       album: req.body.album || '',
       genre: req.body.genre || '',
       description: req.body.description || '',
-      
-      // Infos du fichier audio
       audioFileName: audioFile.filename,
       audioOriginalName: audioFile.originalname,
       audioPath: audioFile.path,
       audioSize: audioFile.size,
       audioMimeType: audioFile.mimetype,
-      
-      // Infos de l'image
       imageFileName: imageFile.filename,
       imageOriginalName: imageFile.originalname,
       imagePath: imageFile.path,
       imageSize: imageFile.size,
       imageMimeType: imageFile.mimetype,
-      
-      // Pour le moment, mettez un ID utilisateur fixe pour tester
-      // Plus tard, ce sera req.user._id quand vous aurez l'authentification
-      uploadedBy: "68979387425d91d89f0fab39" // REMPLACEZ par un vrai ID de votre collection users CEST FAIT*
+      eglises: eglisesArray,  // Relation many-to-many avec Eglises
+      uploadedBy: "68979387425d91d89f0fab39" // Pour tests, remplace par req.user._id en prod
     });
 
-    // Sauvegarder dans MongoDB
     const savedAudio = await newAudio.save();
-    
+
     res.status(201).json({
       message: 'Audio uploadé avec succès',
       audio: savedAudio
@@ -67,14 +63,18 @@ router.post('/upload', upload.fields([
   }
 });
 
-// Route GET pour récupérer tous les audios
+// ============================================
+// GET - Récupérer tous les audios avec relations
+// ============================================
 router.get('/', async (req, res) => {
   try {
     const audios = await Audio.find({ isActive: true })
-      .populate('uploadedBy', 'name email')  // Récupère les infos de l'utilisateur
-      .sort({ uploadedAt: -1 });  // Plus récent en premier
-    
+      .populate('uploadedBy', 'name email')  // Infos utilisateur
+      .populate('eglises', 'nom imagePath')  // Infos églises liées (nom + image)
+      .sort({ uploadedAt: -1 });  // Tri du plus récent au plus ancien
+
     res.json(audios);
+
   } catch (error) {
     res.status(500).json({ 
       message: 'Erreur lors de la récupération des audios',
@@ -83,57 +83,67 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ========== AJOUTEZ CETTE ROUTE DELETE ICI ==========
+// ============================================
+// GET - Récupérer un audio unique par ID
+// ============================================
+router.get('/:id', async (req, res) => {
+  try {
+    const audio = await Audio.findById(req.params.id)
+      .populate('uploadedBy', 'name email')
+      .populate('eglises', 'nom imagePath');
 
+    if (!audio) {
+      return res.status(404).json({ message: 'Audio non trouvé' });
+    }
 
-// Route DELETE pour supprimer un audio
+    res.json(audio);
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Erreur récupération audio',
+      error: error.message
+    });
+  }
+});
+
+// ============================================
+// DELETE - Supprimer un audio et ses fichiers physiques
+// ============================================
 router.delete('/:id', async (req, res) => {
   try {
-    // Chercher l'audio dans la base de données
     const audio = await Audio.findById(req.params.id);
-    
+
     if (!audio) {
-      return res.status(404).json({ 
-        message: 'Audio non trouvé' 
-      });
+      return res.status(404).json({ message: 'Audio non trouvé' });
     }
-    
-    // Supprimer les fichiers physiques
+
+    // Supprimer fichier audio physique
     try {
-      // Supprimer le fichier audio s'il existe
       if (fs.existsSync(audio.audioPath)) {
         fs.unlinkSync(audio.audioPath);
         console.log('Fichier audio supprimé:', audio.audioPath);
       }
-      
-      // Supprimer l'image si elle existe
       if (fs.existsSync(audio.imagePath)) {
         fs.unlinkSync(audio.imagePath);
-        console.log('Image supprimée:', audio.imagePath);
+        console.log('Image audio supprimée:', audio.imagePath);
       }
     } catch (fileError) {
-      console.error('Erreur lors de la suppression des fichiers:', fileError);
-      // On continue même si les fichiers n'existent pas
+      console.error('Erreur suppression fichiers:', fileError);
     }
-    
-    // Supprimer l'entrée de MongoDB
+
     await Audio.findByIdAndDelete(req.params.id);
-    
-    console.log('Audio supprimé de la DB:', req.params.id);
-    
-    res.json({ 
+
+    res.json({
       message: 'Audio supprimé avec succès',
-      id: req.params.id 
+      id: req.params.id
     });
-    
+
   } catch (error) {
-    console.error('Erreur DELETE:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Erreur lors de la suppression',
-      error: error.message 
+      error: error.message
     });
   }
 });
-// ========== FIN DE LA ROUTE DELETE ==========
 
 module.exports = router;

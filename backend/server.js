@@ -11,6 +11,8 @@ const categoriesRouter = require('./routes/categories');
 const livresRouter = require('./routes/livres');
 //ajout
 const annoncesRouter = require('./routes/annonces');
+// ajout 
+const eglisesRouter = require('./routes/eglises');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +50,8 @@ app.use('/api/livres', livresRouter);
 //ajout
 app.use('/api/annonces', annoncesRouter);
 
+//  ajout
+app.use('/api/eglises', eglisesRouter);
 
 // Route principale
 

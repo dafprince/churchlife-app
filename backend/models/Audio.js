@@ -92,7 +92,12 @@ const AudioSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
-  }
+  },
+  eglises: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Eglise'
+  }]
+
 });
 
 // Créer le modèle
