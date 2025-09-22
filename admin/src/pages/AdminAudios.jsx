@@ -1,141 +1,118 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { styles, audioStyles, modalStyles } from '../css/style';
-import { FaPlus, FaTrash, FaPlay } from 'react-icons/fa';
-import { getAudios, uploadAudio, deleteAudio, getImageUrl, getEglises } from '../services/api';
+import React, { useState, useEffect } from 'react';
+import { getAudios, uploadAudio, deleteAudio, getImageUrl } from '../services/api';
+import { audioStyles, modalStyles } from '../css/style';
+import { FaTrash, FaPlus } from 'react-icons/fa'; // FaPlay supprimé ici
+
 
 const AdminAudios = () => {
-  // États
   const [audios, setAudios] = useState([]);
-  const [eglises, setEglises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [search, setSearch] = useState('');
-  const [selectedEglise, setSelectedEglise] = useState('all');
 
-  // Charger audios et églises au montage
+  // Charger les audios au montage
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [audioData, eglisesData] = await Promise.all([getAudios(), getEglises()]);
-        setAudios(audioData);
-        setEglises(eglisesData);
-      } catch (e) {
-        alert('Erreur chargement données');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
+    fetchAudios();
   }, []);
 
-  // Filtrer audios par recherche et église sélectionnée
-  const filteredAudios = useMemo(() => {
-    return audios.filter(audio => {
-      const matchesSearch = audio.titre.toLowerCase().includes(search.toLowerCase()) ||
-        audio.artiste.toLowerCase().includes(search.toLowerCase());
-
-      const matchesEglise = selectedEglise === 'all' || 
-        (audio.eglises && audio.eglises.some(e => e._id === selectedEglise));
-
-      return matchesSearch && matchesEglise;
-    });
-  }, [audios, search, selectedEglise]);
-
-  // Supprimer audio
-  const handleDelete = async (id, titre) => {
-    if (!window.confirm(`Supprimer l’audio "${titre}" ?`)) return;
+  const fetchAudios = async () => {
     try {
-      await deleteAudio(id);
-      setAudios(prev => prev.filter(a => a._id !== id));
-    } catch {
-      alert('Erreur suppression audio');
+      const data = await getAudios();
+      setAudios(data);
+    } catch (error) {
+      console.error('Erreur:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <div style={styles.emptyState}>Chargement des audios...</div>;
+  // Fonction pour supprimer
+  const handleDelete = async (id, titre) => {
+    if (!window.confirm(`Supprimer "${titre}" ?`)) return;
+
+    try {
+      await deleteAudio(id);
+      setAudios(audios.filter(a => a._id !== id));
+    } catch (error) {
+      alert('Erreur lors de la suppression');
+    }
+  };
+
+  if (loading) return <div>Chargement des audios...</div>;
 
   return (
     <div style={audioStyles.container}>
       <div style={audioStyles.header}>
         <h2 style={audioStyles.title}>Gestion des Audios</h2>
-
-        <input
-          type="text"
-          placeholder="Rechercher titre ou artiste"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', marginRight: 12 }}
-        />
-
-        <select
-          value={selectedEglise}
-          onChange={e => setSelectedEglise(e.target.value)}
-          style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
+        <p style={{ color: '#6b7280' }}>
+          {audios.length} audio(s) disponible(s)
+        </p>
+        <button
+          style={modalStyles.addBtn}
+          onClick={() => setShowModal(true)}
         >
-          <option value="all">Toutes les églises</option>
-          {eglises.map(e => (
-            <option key={e._id} value={e._id}>{e.nom}</option>
-          ))}
-        </select>
-
-        <button style={modalStyles.addBtn} onClick={() => setShowModal(true)}>
-          <FaPlus /> Ajouter Audio
+          <FaPlus /> Ajouter un Audio
         </button>
       </div>
 
-      {/* Grid affichage audios */}
+      {/* Grille des audios */}
       <div style={audioStyles.grid}>
-        {filteredAudios.length === 0 ? (
-          <div style={{ padding: 40, fontStyle: 'italic' }}>Aucun audio trouvé</div>
-        ) : filteredAudios.map(audio => (
-          <AudioCard key={audio._id} audio={audio} onDelete={handleDelete} />
+        {audios.map(audio => (
+          <AudioCard
+            key={audio._id}
+            audio={audio}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
 
-      {/* Modal upload */}
-      {showModal && (
-        <UploadModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onUploadSuccess={async () => {
-            const updatedAudios = await getAudios();
-            setAudios(updatedAudios);
-            setShowModal(false);
-          }}
-          eglises={eglises}
-        />
+      {audios.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>
+          Aucun audio pour le moment
+        </div>
       )}
+
+      <UploadModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onUploadSuccess={() => {
+          fetchAudios();
+          setShowModal(false);
+        }}
+      />
     </div>
   );
 };
 
-// Carte audio
+
+// Composant pour chaque carte audio
 const AudioCard = ({ audio, onDelete }) => {
-  const [hover, setHover] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Construire les URLs avec getImageUrl
   const imageUrl = getImageUrl(audio.imagePath);
   const audioUrl = getImageUrl(audio.audioPath);
 
   return (
     <div
-      style={{ ...audioStyles.card, ...(hover ? audioStyles.cardHover : {}) }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      style={{
+        ...audioStyles.card,
+        ...(isHovered ? audioStyles.cardHover : {})
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <img
         src={imageUrl}
         alt={audio.titre}
         style={audioStyles.cardImage}
-        onError={e => { e.currentTarget.src = 'https://via.placeholder.com/300x200?text=No+Image'; }}
+        onError={(e) => {
+          e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+        }}
       />
+
       <div style={audioStyles.cardBody}>
         <h3 style={audioStyles.cardTitle}>{audio.titre}</h3>
         <p style={audioStyles.cardArtist}>{audio.artiste}</p>
-
-        <div>
-          <b>Églises : </b>
-          {(audio.eglises && audio.eglises.length > 0) ?
-            audio.eglises.map(e => e.nom).join(', ') : 'Aucune'}
-        </div>
 
         <audio controls style={audioStyles.audioPlayer}>
           <source src={audioUrl} type={audio.audioMimeType} />
@@ -146,10 +123,11 @@ const AudioCard = ({ audio, onDelete }) => {
           <button
             style={audioStyles.deleteBtn}
             onClick={() => onDelete(audio._id, audio.titre)}
-            onMouseEnter={e => e.target.style.backgroundColor = '#dc2626'}
-            onMouseLeave={e => e.target.style.backgroundColor = '#ef4444'}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#ef4444'}
           >
-            <FaTrash style={{ marginRight: 4 }} /> Supprimer
+            <FaTrash style={{ display: 'inline', marginRight: '4px' }} />
+            Supprimer
           </button>
         </div>
       </div>
@@ -157,10 +135,15 @@ const AudioCard = ({ audio, onDelete }) => {
   );
 };
 
-// Modal upload avec sélection des églises
-const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
+
+// Composant Modal
+const UploadModal = ({ isOpen, onClose, onUploadSuccess }) => {
   const [formData, setFormData] = useState({
-    titre: '', artiste: '', album: '', genre: '', description: '', eglises: []
+    titre: '',
+    artiste: '',
+    album: '',
+    genre: '',
+    description: '',
   });
   const [audioFile, setAudioFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -168,24 +151,11 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
 
   if (!isOpen) return null;
 
-  const toggleEglise = (id) => {
-    setFormData(prev => ({
-      ...prev,
-      eglises: prev.eglises.includes(id)
-        ? prev.eglises.filter(e => e !== id)
-        : [...prev.eglises, id]
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!audioFile || !imageFile) {
-      alert('Veuillez choisir un fichier audio et une image');
-      return;
-    }
-    if (formData.eglises.length === 0) {
-      alert('Veuillez sélectionner au moins une église');
+      alert('Veuillez sélectionner un audio et une image');
       return;
     }
 
@@ -200,18 +170,18 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
     data.append('audio', audioFile);
     data.append('image', imageFile);
 
-    // Append multiple eglises
-    formData.eglises.forEach(id => data.append('eglises', id));
-
     try {
       await uploadAudio(data);
-      alert('Audio ajouté avec succès !');
+      alert('Audio uploadé avec succès !');
       onUploadSuccess();
       onClose();
-      setFormData({ titre: '', artiste: '', album: '', genre: '', description: '', eglises: [] });
+      // Reset form
+      setFormData({
+        titre: '', artiste: '', album: '', genre: '', description: ''
+      });
       setAudioFile(null);
       setImageFile(null);
-    } catch {
+    } catch (error) {
       alert('Erreur lors de l\'upload');
     } finally {
       setUploading(false);
@@ -220,8 +190,9 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
 
   return (
     <div style={modalStyles.overlay} onClick={onClose}>
-      <div style={modalStyles.modal} onClick={e => e.stopPropagation()}>
+      <div style={modalStyles.modal} onClick={(e) => e.stopPropagation()}>
         <button style={modalStyles.closeBtn} onClick={onClose}>×</button>
+
         <h2 style={modalStyles.modalTitle}>Ajouter un Audio</h2>
 
         <form onSubmit={handleSubmit}>
@@ -230,9 +201,9 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
             <input
               type="text"
               required
-              value={formData.titre}
-              onChange={e => setFormData({ ...formData, titre: e.target.value })}
               style={modalStyles.input}
+              value={formData.titre}
+              onChange={(e) => setFormData({ ...formData, titre: e.target.value })}
             />
           </div>
 
@@ -241,9 +212,9 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
             <input
               type="text"
               required
-              value={formData.artiste}
-              onChange={e => setFormData({ ...formData, artiste: e.target.value })}
               style={modalStyles.input}
+              value={formData.artiste}
+              onChange={(e) => setFormData({ ...formData, artiste: e.target.value })}
             />
           </div>
 
@@ -251,9 +222,9 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
             <label style={modalStyles.label}>Album</label>
             <input
               type="text"
-              value={formData.album}
-              onChange={e => setFormData({ ...formData, album: e.target.value })}
               style={modalStyles.input}
+              value={formData.album}
+              onChange={(e) => setFormData({ ...formData, album: e.target.value })}
             />
           </div>
 
@@ -261,9 +232,9 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
             <label style={modalStyles.label}>Genre</label>
             <input
               type="text"
-              value={formData.genre}
-              onChange={e => setFormData({ ...formData, genre: e.target.value })}
               style={modalStyles.input}
+              value={formData.genre}
+              onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
             />
           </div>
 
@@ -271,51 +242,39 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
             <label style={modalStyles.label}>Description</label>
             <input
               type="text"
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
               style={modalStyles.input}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
 
           <div style={modalStyles.formGroup}>
-            <label style={modalStyles.label}>Sélectionner Églises *</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-              {eglises.map(e => (
-                <label key={e._id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={formData.eglises.includes(e._id)}
-                    onChange={() => toggleEglise(e._id)}
-                  />
-                  {e.nom}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ marginTop: 20 }}>
             <label style={modalStyles.label}>Fichier Audio *</label>
             <input
               type="file"
-              accept="audio/*"
               required
-              onChange={e => setAudioFile(e.target.files[0])}
+              accept="audio/*"
               style={modalStyles.fileInput}
+              onChange={(e) => setAudioFile(e.target.files[0])}
             />
           </div>
 
-          <div style={{ marginTop: 20 }}>
+          <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Image de couverture *</label>
             <input
               type="file"
-              accept="image/*"
               required
-              onChange={e => setImageFile(e.target.files[0])}
+              accept="image/*"
               style={modalStyles.fileInput}
+              onChange={(e) => setImageFile(e.target.files[0])}
             />
           </div>
 
-          <button type="submit" style={modalStyles.uploadBtn} disabled={uploading}>
+          <button
+            type="submit"
+            style={modalStyles.uploadBtn}
+            disabled={uploading}
+          >
             {uploading ? 'Upload en cours...' : 'Uploader'}
           </button>
         </form>
