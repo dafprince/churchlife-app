@@ -146,4 +146,41 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Dans routes/audios.js modification audio js 
+router.put('/:id', async (req, res) => {
+  try {
+    const audio = await Audio.findById(req.params.id);
+    if (!audio) {
+      return res.status(404).json({ message: 'Audio non trouvé' });
+    }
+
+    // Mise à jour des champs simples s'ils sont fournis
+    if (req.body.titre !== undefined) audio.titre = req.body.titre;
+    if (req.body.artiste !== undefined) audio.artiste = req.body.artiste;
+    if (req.body.album !== undefined) audio.album = req.body.album;
+    if (req.body.genre !== undefined) audio.genre = req.body.genre;
+    if (req.body.description !== undefined) audio.description = req.body.description;
+
+    // Mise à jour relation eglises (array d'id)
+    if (req.body.eglises !== undefined) {
+      audio.eglises = Array.isArray(req.body.eglises)
+        ? req.body.eglises
+        : [req.body.eglises];
+    }
+
+    const updatedAudio = await audio.save();
+
+    res.json({
+      message: 'Audio mis à jour avec succès',
+      audio: updatedAudio
+    });
+  } catch (error) {
+    console.error('Erreur mise à jour audio:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la mise à jour',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
