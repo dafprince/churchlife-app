@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { styles, audioStyles, modalStyles } from '../css/style';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import { getAudios, uploadAudio, deleteAudio, getImageUrl, getEglises } from '../services/api';
 
 const AdminAudios = () => {
