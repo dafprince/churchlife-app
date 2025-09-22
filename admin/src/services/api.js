@@ -136,28 +136,3 @@ export function getImageUrl(imagePath) {
   const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
   return `${BASE_URL}/${imagePath}`;
 }
-///=============================================
-// Récupérer annonces
-export async function getAnnonces() {
-  const res = await fetch(`${API_BASE_URL}/annonces`);
-  if (!res.ok) throw new Error('Erreur réseau');
-  return res.json();
-}
-
-// Créer annonce
-export async function createAnnonce(payload) {
-  const res = await fetch(`${API_BASE_URL}/annonces/create`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error('Erreur lors de la création');
-  return res.json();
-}
-
-// Supprimer annonce
-export async function deleteAnnonce(id) {
-  const res = await fetch(`${API_BASE_URL}/annonces/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Erreur suppression');
-  return res.json();
-}

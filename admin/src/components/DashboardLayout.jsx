@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import AdminUsers from '../pages/AdminUsers';
 import { dashboardStyles } from '../css/style';
-import { FaUsers, FaMusic, FaBook , FaBullhorn  } from 'react-icons/fa';
+import { FaUsers, FaMusic, FaBook } from 'react-icons/fa';
 import { useEffect } from 'react';  // Ajoutez useEffect
 import { getUsers, getAudios } from '../services/api';
 import AdminAudios from '../pages/AdminAudios';  // Ajoutez cette ligne
 import AdminBooks from '../pages/AdminBooks';
 import CategorieLivresPage from '../pages/CategorieLivresPage';
-import AdminAnnonces from '../pages/AdminAnnonces';
-
-
 
 
 const DashboardLayout = () => {
@@ -53,7 +50,7 @@ useEffect(() => {
     }}
   >
     <FaUsers />
-    <span>Utilisateurs1</span>
+    <span>Utilisateurs</span>
   </button>
 
   <button
@@ -77,17 +74,6 @@ useEffect(() => {
     <FaBook />
     <span>Livres</span>
   </button>
-  <button
-  onClick={() => setCurrentPage('annonces')}
-  style={{
-    ...dashboardStyles.navItem,
-    ...(currentPage === 'annonces' ? dashboardStyles.navItemActive : {})
-  }}
->
-  <FaBullhorn />  {/* installer react-icons/fa */}
-  <span>Annonces</span>
-</button>
-
   <button onClick={() => setCurrentPage("categories")}>Catégories</button>
 
   
@@ -123,13 +109,11 @@ useEffect(() => {
  {currentPage === 'audios' && <AdminAudios />}
  {currentPage === 'books' && <AdminBooks />}
  {currentPage === "categories" && <CategorieLivresPage />}
- {currentPage === 'annonces' && <AdminAnnonces />}
 
 </main>
     </div>
   );
 };
 //  {currentPage === 'books' && <div>Page Livres (à créer)</div>}
-
 
 export default DashboardLayout;

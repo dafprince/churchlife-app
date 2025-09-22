@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/core/presentation/pages/SplashScreen%20.dart';
 import 'package:mobile/features/audios/bloc/audio_bloc.dart';
 import 'package:mobile/features/audios/data/datasources/audio_api_service.dart';
 import 'package:mobile/features/audios/data/repositories/audio_repository.dart';
@@ -14,6 +15,7 @@ import 'package:mobile/features/users/bloc/user_event.dart';
 import 'package:mobile/features/users/data/repositories/UserRepository.dart';
 import 'package:mobile/features/users/presentation/pages/users_page.dart';
 import 'features/users/data/datasources/UserApiService.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   // WidgetsFlutterBinding.ensureInitialized(); // nécessaire avant async dans main
@@ -69,8 +71,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ChurchLife',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const UserPage(), // 👈 on démarre directement sur UserPage
+      theme: ThemeData(primarySwatch: Colors.amber),
+
+      home: SplashScreen(),
+      // 👈 on démarre directement sur UserPage
     );
   }
 }

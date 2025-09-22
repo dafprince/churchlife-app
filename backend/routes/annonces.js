@@ -33,4 +33,14 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Récupérer toutes les annonces
+router.get('/', async (req, res) => {
+  try {
+    const annonces = await Annonce.find(); // sans filtre : tout
+    res.json(annonces);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur lors de la récupération des annonces' });
+  }
+});
+
 module.exports = router;
