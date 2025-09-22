@@ -9,6 +9,9 @@ import AdminBooks from '../pages/AdminBooks';
 import CategorieLivresPage from '../pages/CategorieLivresPage';
 import AdminAnnonces from '../pages/AdminAnnonces';
 import { FaBullhorn } from 'react-icons/fa';  // Pour l’icône annonces
+import EglisesPage from '../pages/EglisesPage';
+import { FaChurch } from 'react-icons/fa';  // Icône pour la sidebar (tu peux choisir un autre icône)
+
 
 
 
@@ -90,6 +93,18 @@ useEffect(() => {
   <span>Annonces</span>
 </button>
 
+<button
+  onClick={() => setCurrentPage('eglises')}
+  style={{
+    ...dashboardStyles.navItem,
+    ...(currentPage === 'eglises' ? dashboardStyles.navItemActive : {})
+  }}
+>
+  <FaChurch />
+  <span>Églises</span>
+</button>
+
+
 
   
 </nav>
@@ -125,6 +140,8 @@ useEffect(() => {
  {currentPage === 'books' && <AdminBooks />}
  {currentPage === "categories" && <CategorieLivresPage />}
  {currentPage === 'annonces' && <AdminAnnonces />}
+ {currentPage === 'eglises' && <EglisesPage />}
+
 
 
 </main>

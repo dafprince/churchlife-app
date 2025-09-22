@@ -162,3 +162,37 @@ export async function deleteAnnonce(id) {
   if (!res.ok) throw new Error('Suppression échouée');
   return res.json();
 }
+//=============== les   Api  Les eglise ==========
+export async function getEglises() {
+  const res = await fetch(`${API_BASE_URL}/eglises`);
+  if (!res.ok) throw new Error('Erreur réseau');
+  return res.json();
+}
+
+export async function createEglise(formData) {
+  const res = await fetch(`${API_BASE_URL}/eglises/create`, {
+    method: 'POST',
+    body: formData
+  });
+  if (!res.ok) throw new Error('Erreur création église');
+  return res.json();
+}
+
+export async function deleteEglise(id) {
+  const res = await fetch(`${API_BASE_URL}/eglises/${id}`, {
+    method: 'DELETE'
+  });
+  if (!res.ok) throw new Error('Erreur suppression église');
+  return res.json();
+}
+//====================  
+// Mettre à jour un audio
+export async function updateAudio(id, payload) {
+  const res = await fetch(`${API_BASE_URL}/audios/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('Erreur mise à jour audio');
+  return res.json();
+}
