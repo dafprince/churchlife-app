@@ -96,7 +96,11 @@ const AudioSchema = new mongoose.Schema({
   eglises: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Eglise'
-  }]
+  }],
+   publicationDate: {
+    type: Date,
+    required: true  // ou false si tu veux que ça soit optionnel
+  },
 
 });
 

@@ -44,7 +44,8 @@ router.post('/upload', upload.fields([
       imageSize: imageFile.size,
       imageMimeType: imageFile.mimetype,
       eglises: eglisesArray,  // Relation many-to-many avec Eglises
-      uploadedBy: "68979387425d91d89f0fab39" // Pour tests, remplace par req.user._id en prod
+      uploadedBy: "68979387425d91d89f0fab39" ,// Pour tests, remplace par req.user._id en prod
+       publicationDate: req.body.publicationDate ? new Date(req.body.publicationDate) : null,
     });
 
     const savedAudio = await newAudio.save();
