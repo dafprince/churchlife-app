@@ -7,6 +7,9 @@ import { getUsers, getAudios } from '../services/api';
 import AdminAudios from '../pages/AdminAudios';  // Ajoutez cette ligne
 import AdminBooks from '../pages/AdminBooks';
 import CategorieLivresPage from '../pages/CategorieLivresPage';
+import AdminAnnonces from '../pages/AdminAnnonces';
+import { FaBullhorn } from 'react-icons/fa';  // Pour l’icône annonces
+
 
 
 const DashboardLayout = () => {
@@ -76,6 +79,18 @@ useEffect(() => {
   </button>
   <button onClick={() => setCurrentPage("categories")}>Catégories</button>
 
+  <button
+  onClick={() => setCurrentPage('annonces')}
+  style={{
+    ...dashboardStyles.navItem,
+    ...(currentPage === 'annonces' ? dashboardStyles.navItemActive : {})
+  }}
+>
+  <FaBullhorn />
+  <span>Annonces</span>
+</button>
+
+
   
 </nav>
       </aside>
@@ -109,6 +124,8 @@ useEffect(() => {
  {currentPage === 'audios' && <AdminAudios />}
  {currentPage === 'books' && <AdminBooks />}
  {currentPage === "categories" && <CategorieLivresPage />}
+ {currentPage === 'annonces' && <AdminAnnonces />}
+
 
 </main>
     </div>

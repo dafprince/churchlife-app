@@ -136,3 +136,29 @@ export function getImageUrl(imagePath) {
   const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
   return `${BASE_URL}/${imagePath}`;
 }
+//===========================================================
+// Récupérer toutes les annonces
+export async function getAnnonces() {
+  const res = await fetch(`${API_BASE_URL}/annonces`);
+  if (!res.ok) throw new Error('Erreur réseau');
+  return res.json();
+}
+
+// Créer une annonce (upload image + texte)
+export async function createAnnonce(formData) {
+  const res = await fetch(`${API_BASE_URL}/annonces/upload`, {
+    method: 'POST',
+    body: formData  // formData multipart/form-data
+  });
+  if (!res.ok) throw new Error('Erreur lors de la création');
+  return res.json();
+}
+
+// Supprimer une annonce
+export async function deleteAnnonce(id) {
+  const res = await fetch(`${API_BASE_URL}/annonces/${id}`, {
+    method: 'DELETE'
+  });
+  if (!res.ok) throw new Error('Suppression échouée');
+  return res.json();
+}
