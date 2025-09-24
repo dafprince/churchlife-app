@@ -99,7 +99,7 @@ const AudioSchema = new mongoose.Schema({
   }],
    publicationDate: {
     type: Date,
-    required: true  // ou false si tu veux que ça soit optionnel
+    required: false  // ou false si tu veux que ça soit optionnel
   },
 
 });

@@ -15,9 +15,12 @@ const AdminAudios = () => {
     async function fetchData() {
       try {
         const [audioData, eglisesData] = await Promise.all([getAudios(), getEglises()]);
+        console.log('Données audios reçues du backend:', audioData);
+        console.log('Données églises reçues du backend:', eglisesData);
         setAudios(audioData);
         setEglises(eglisesData);
       } catch (e) {
+        console.error('Erreur chargement données:', e);
         alert('Erreur chargement données');
       } finally {
         setLoading(false);
@@ -26,14 +29,18 @@ const AdminAudios = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    console.log('Etat audios mis à jour:', audios);
+  }, [audios]);
+
   const filteredAudios = useMemo(() => {
     return audios.filter(audio => {
-      const matchesSearch = audio.titre.toLowerCase().includes(search.toLowerCase()) ||
+      const matchesSearch =
+        audio.titre.toLowerCase().includes(search.toLowerCase()) ||
         audio.artiste.toLowerCase().includes(search.toLowerCase());
-
-      const matchesEglise = selectedEglise === 'all' || 
+      const matchesEglise =
+        selectedEglise === 'all' ||
         (audio.eglises && audio.eglises.some(e => e._id === selectedEglise));
-
       return matchesSearch && matchesEglise;
     });
   }, [audios, search, selectedEglise]);
@@ -43,7 +50,9 @@ const AdminAudios = () => {
     try {
       await deleteAudio(id);
       setAudios(prev => prev.filter(a => a._id !== id));
-    } catch {
+      console.log(`Audio supprimé : ${id}`);
+    } catch (e) {
+      console.error('Erreur suppression audio:', e);
       alert('Erreur suppression audio');
     }
   };
@@ -54,7 +63,6 @@ const AdminAudios = () => {
     <div style={audioStyles.container}>
       <div style={audioStyles.header}>
         <h2 style={audioStyles.title}>Gestion des Audios</h2>
-
         <input
           type="text"
           placeholder="Rechercher titre ou artiste"
@@ -62,7 +70,6 @@ const AdminAudios = () => {
           onChange={e => setSearch(e.target.value)}
           style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', marginRight: 12 }}
         />
-
         <select
           value={selectedEglise}
           onChange={e => setSelectedEglise(e.target.value)}
@@ -70,29 +77,31 @@ const AdminAudios = () => {
         >
           <option value="all">Toutes les églises</option>
           {eglises.map(e => (
-            <option key={e._id} value={e._id}>{e.nom}</option>
+            <option key={e._id} value={e._id}>
+              {e.nom}
+            </option>
           ))}
         </select>
-
         <button style={modalStyles.addBtn} onClick={() => setShowModal(true)}>
           <FaPlus /> Ajouter Audio
         </button>
       </div>
-
       <div style={audioStyles.grid}>
         {filteredAudios.length === 0 ? (
           <div style={{ padding: 40, fontStyle: 'italic' }}>Aucun audio trouvé</div>
-        ) : filteredAudios.map(audio => (
-          <AudioCard key={audio._id} audio={audio} onDelete={handleDelete} />
-        ))}
+        ) : (
+          filteredAudios.map(audio => (
+            <AudioCard key={audio._id} audio={audio} onDelete={handleDelete} />
+          ))
+        )}
       </div>
-
       {showModal && (
         <UploadModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
           onUploadSuccess={async () => {
             const updatedAudios = await getAudios();
+            console.log('Nouveaux audios après upload:', updatedAudios);
             setAudios(updatedAudios);
             setShowModal(false);
           }}
@@ -108,6 +117,22 @@ const AudioCard = ({ audio, onDelete }) => {
   const imageUrl = getImageUrl(audio.imagePath);
   const audioUrl = getImageUrl(audio.audioPath);
 
+  // Formatage date uploadedAt avec affichage "lundi 23 octobre 2024"
+  const formatDate = dateStr => {
+    if (!dateStr) return 'Date non renseignée';
+    const date = new Date(dateStr);
+    return isNaN(date.getTime())
+      ? 'Date non renseignée'
+      : date.toLocaleDateString('fr-FR', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+  };
+
+  const publishedDate = formatDate(audio.uploadedAt);
+
   return (
     <div
       style={{ ...audioStyles.card, ...(hover ? audioStyles.cardHover : {}) }}
@@ -118,29 +143,30 @@ const AudioCard = ({ audio, onDelete }) => {
         src={imageUrl}
         alt={audio.titre}
         style={audioStyles.cardImage}
-        onError={e => { e.currentTarget.src = 'https://via.placeholder.com/300x200?text=No+Image'; }}
+        onError={e => {
+          e.currentTarget.src = 'https://via.placeholder.com/300x200?text=No+Image';
+        }}
       />
       <div style={audioStyles.cardBody}>
         <h3 style={audioStyles.cardTitle}>{audio.titre}</h3>
         <p style={audioStyles.cardArtist}>{audio.artiste}</p>
-
         <div>
           <b>Églises : </b>
-          {(audio.eglises && audio.eglises.length > 0) ?
-            audio.eglises.map(e => e.nom).join(', ') : 'Aucune'}
+          {audio.eglises && audio.eglises.length > 0
+            ? audio.eglises.map(e => e.nom).join(', ')
+            : 'Aucune'}
         </div>
-
+        <p style={{ fontSize: 12, color: '#666', marginTop: 8 }}>Publié le : {publishedDate}</p>
         <audio controls style={audioStyles.audioPlayer}>
           <source src={audioUrl} type={audio.audioMimeType} />
           Votre navigateur ne supporte pas l'audio.
         </audio>
-
         <div style={audioStyles.cardActions}>
           <button
             style={audioStyles.deleteBtn}
             onClick={() => onDelete(audio._id, audio.titre)}
-            onMouseEnter={e => e.target.style.backgroundColor = '#dc2626'}
-            onMouseLeave={e => e.target.style.backgroundColor = '#ef4444'}
+            onMouseEnter={e => (e.target.style.backgroundColor = '#dc2626')}
+            onMouseLeave={e => (e.target.style.backgroundColor = '#ef4444')}
           >
             Supprimer
           </button>
@@ -151,30 +177,31 @@ const AudioCard = ({ audio, onDelete }) => {
 };
 
 const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = React.useState({
     titre: '',
     artiste: '',
     album: '',
     genre: '',
     description: '',
-    eglises: []
+    publicationDate: '',
+    eglises: [],
   });
-  const [audioFile, setAudioFile] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
+  const [audioFile, setAudioFile] = React.useState(null);
+  const [imageFile, setImageFile] = React.useState(null);
+  const [uploading, setUploading] = React.useState(false);
 
   if (!isOpen) return null;
 
-  const toggleEglise = (id) => {
+  const toggleEglise = id => {
     setFormData(prev => ({
       ...prev,
       eglises: prev.eglises.includes(id)
         ? prev.eglises.filter(e => e !== id)
-        : [...prev.eglises, id]
+        : [...prev.eglises, id],
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     if (!audioFile || !imageFile) {
@@ -185,15 +212,25 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
       alert('Veuillez sélectionner au moins une église');
       return;
     }
+    if (!formData.publicationDate) {
+      alert('Veuillez sélectionner une date de publication');
+      return;
+    }
 
     setUploading(true);
 
     const data = new FormData();
+
+    // Même si on utilise uploadedAt pour l'affichage,
+    // on continue d'envoyer publicationDate pour l'exemple ou futur usage.
+    const publicationDateISO = new Date(formData.publicationDate).toISOString();
+
     data.append('titre', formData.titre);
     data.append('artiste', formData.artiste);
     data.append('album', formData.album);
     data.append('genre', formData.genre);
     data.append('description', formData.description);
+    data.append('publicationDate', publicationDateISO);
     data.append('audio', audioFile);
     data.append('image', imageFile);
 
@@ -204,11 +241,20 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
       alert('Audio ajouté avec succès !');
       onUploadSuccess();
       onClose();
-      setFormData({ titre: '', artiste: '', album: '', genre: '', description: '', eglises: [] });
+      setFormData({
+        titre: '',
+        artiste: '',
+        album: '',
+        genre: '',
+        description: '',
+        publicationDate: '',
+        eglises: [],
+      });
       setAudioFile(null);
       setImageFile(null);
-    } catch {
-      alert('Erreur lors de l\'upload');
+    } catch (e) {
+      console.error('Erreur upload audio:', e);
+      alert("Erreur lors de l'upload");
     } finally {
       setUploading(false);
     }
@@ -217,9 +263,10 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
   return (
     <div style={modalStyles.overlay} onClick={onClose}>
       <div style={modalStyles.modal} onClick={e => e.stopPropagation()}>
-        <button style={modalStyles.closeBtn} onClick={onClose}>×</button>
+        <button style={modalStyles.closeBtn} onClick={onClose}>
+          ×
+        </button>
         <h2 style={modalStyles.modalTitle}>Ajouter un Audio</h2>
-
         <form onSubmit={handleSubmit}>
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Titre *</label>
@@ -231,7 +278,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.input}
             />
           </div>
-
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Artiste *</label>
             <input
@@ -242,7 +288,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.input}
             />
           </div>
-
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Album</label>
             <input
@@ -252,7 +297,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.input}
             />
           </div>
-
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Genre</label>
             <input
@@ -262,7 +306,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.input}
             />
           </div>
-
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Description</label>
             <input
@@ -272,7 +315,16 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.input}
             />
           </div>
-
+          <div style={modalStyles.formGroup}>
+            <label style={modalStyles.label}>Date de publication *</label>
+            <input
+              type="date"
+              required
+              value={formData.publicationDate}
+              onChange={e => setFormData({ ...formData, publicationDate: e.target.value })}
+              style={modalStyles.input}
+            />
+          </div>
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Sélectionner Église(s) *</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, maxHeight: 120, overflowY: 'auto' }}>
@@ -288,7 +340,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               ))}
             </div>
           </div>
-
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Fichier Audio *</label>
             <input
@@ -299,7 +350,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.fileInput}
             />
           </div>
-
           <div style={modalStyles.formGroup}>
             <label style={modalStyles.label}>Image de couverture *</label>
             <input
@@ -310,7 +360,6 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess, eglises }) => {
               style={modalStyles.fileInput}
             />
           </div>
-
           <button type="submit" style={modalStyles.uploadBtn} disabled={uploading}>
             {uploading ? 'Upload en cours...' : 'Uploader'}
           </button>

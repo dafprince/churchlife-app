@@ -12,21 +12,31 @@ router.post('/upload', upload.fields([
   { name: 'image', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Vérifier présence fichiers audio + image
     if (!req.files.audio || !req.files.image) {
       return res.status(400).json({ message: 'Audio et image sont requis' });
     }
 
     const audioFile = req.files.audio[0];
     const imageFile = req.files.image[0];
-
-    // Récupérer la liste d'ID des églises liées (string ou tableau)
     let eglisesArray = [];
     if (req.body.eglises) {
       eglisesArray = typeof req.body.eglises === 'string' ? [req.body.eglises] : req.body.eglises;
     }
 
-    // Création du nouvel audio avec relations
+    // Étapes date
+    const receivedDateStr = req.body.publicationDate;
+    console.log('Date reçue dans la requête:', receivedDateStr);
+
+    let publicationDate = null;
+    if (receivedDateStr) {
+      const tempDate = new Date(receivedDateStr);
+      if (!isNaN(tempDate.getTime())) {
+        publicationDate = tempDate;
+      } else {
+        console.warn('Date reçue invalide:', receivedDateStr);
+      }
+    }
+
     const newAudio = new Audio({
       titre: req.body.titre,
       artiste: req.body.artiste,
@@ -43,12 +53,14 @@ router.post('/upload', upload.fields([
       imagePath: imageFile.path,
       imageSize: imageFile.size,
       imageMimeType: imageFile.mimetype,
-      eglises: eglisesArray,  // Relation many-to-many avec Eglises
-      uploadedBy: "68979387425d91d89f0fab39" ,// Pour tests, remplace par req.user._id en prod
-       publicationDate: req.body.publicationDate ? new Date(req.body.publicationDate) : null,
+      eglises: eglisesArray,
+      uploadedBy: "68979387425d91d89f0fab39",
+      publicationDate,  // <- date validée ou null,
     });
 
     const savedAudio = await newAudio.save();
+
+    console.log('Audio sauvegardé:', savedAudio);
 
     res.status(201).json({
       message: 'Audio uploadé avec succès',

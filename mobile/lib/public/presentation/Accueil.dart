@@ -74,6 +74,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
                 return Stack(
                   fit: StackFit.expand,
+
                   children: [
                     ClipPath(
                       clipper: TopWaveClipper(),
