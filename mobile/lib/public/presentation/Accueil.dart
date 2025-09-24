@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/features/categories/presentation/pages/category_page.dart';
+import 'package:mobile/features/categories/presentation/pages/homeLibrary.dart';
+import 'package:mobile/features/eglises/presentation/eglise_screen.dart';
 
 class AccueilPage extends StatefulWidget {
   @override
@@ -225,42 +228,52 @@ class _AccueilPageState extends State<AccueilPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
+                    //==
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 10,
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEEF4FB),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            padding: const EdgeInsets.all(12),
-                            child: Icon(
-                              Icons.headphones_rounded,
-                              color: const Color(0xFF6E8EF5),
-                              size: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          const Expanded(
-                            child: Text(
-                              'Écouter les prédications\nde différentes églises',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(18),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => EgliseScreen()),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEEF4FB),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: Icon(
+                                Icons.headphones_rounded,
+                                color: const Color(0xFF6E8EF5),
+                                size: 28,
                               ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: Color(0xFF6E8EF5),
-                          ),
-                        ],
+                            const SizedBox(width: 14),
+                            const Expanded(
+                              child: Text(
+                                'Écouter les prédications\nde différentes églises',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: Color(0xFF6E8EF5),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    //===
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -519,6 +532,9 @@ class _AccueilPageState extends State<AccueilPage> {
             child: ElevatedButton(
               onPressed: () {
                 // TODO: navigate full library
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => PenseeDuJourWidget()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6E8EF5),
