@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/features/categories/presentation/pages/category_page.dart';
 import 'package:mobile/features/categories/presentation/pages/homeLibrary.dart';
 import 'package:mobile/features/eglises/presentation/eglise_screen.dart';
+// Import pour le widget des annonces
+import '../../features/annonce/presentation/annonce_screen.dart';
+// Imports pour le BLoC des annonces
+import '../../features/annonce/bloc/annonce_bloc.dart';
+import '../../features/annonce/bloc/annonce_event.dart';
 
 class AccueilPage extends StatefulWidget {
   @override
@@ -11,6 +17,13 @@ class AccueilPage extends StatefulWidget {
 class _AccueilPageState extends State<AccueilPage> {
   int _selectedIndex = 0;
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Charger les annonces au démarrage
+    context.read<AnnonceBloc>().add(LoadAnnoncesEvent());
+  }
 
   @override
   void dispose() {
@@ -77,7 +90,6 @@ class _AccueilPageState extends State<AccueilPage> {
 
                 return Stack(
                   fit: StackFit.expand,
-
                   children: [
                     ClipPath(
                       clipper: TopWaveClipper(),
@@ -160,73 +172,8 @@ class _AccueilPageState extends State<AccueilPage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Nos annonces',
-                        style: TextStyle(
-                          color: Color(0xFF536DFE),
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 180,
-                      child: PageView.builder(
-                        controller: PageController(),
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    "https://picsum.photos/id/${index + 52}/420/220",
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    offset: Offset(0, 6),
-                                    blurRadius: 8,
-                                  ),
-                                ],
-                              ),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(32),
-                                      bottomRight: Radius.circular(32),
-                                    ),
-                                    color: Colors.black45,
-                                  ),
-                                  child: Text(
-                                    'Annonce ${index + 1}',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    // Widget des annonces avec données réelles du backend
+                    AnnoncesSectionWidget(),
                     const SizedBox(height: 24),
                     //==
                     Padding(

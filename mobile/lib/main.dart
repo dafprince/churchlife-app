@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/core/presentation/pages/SplashScreen%20.dart';
+import 'package:mobile/features/annonce/bloc/annonce_bloc.dart';
+import 'package:mobile/features/annonce/data/datasources/annonce_api_service.dart';
+import 'package:mobile/features/annonce/data/repositories/annonce_repositorie.dart';
 import 'package:mobile/features/audios/bloc/audio_bloc.dart';
 import 'package:mobile/features/audios/data/datasources/audio_api_service.dart';
 import 'package:mobile/features/audios/data/repositories/audio_repository.dart';
@@ -56,6 +59,10 @@ void main() {
         // NOUVEAU : BLoC des audios
         BlocProvider(
           create: (_) => AudioBloc(AudioRepository(AudioApiService())),
+        ),
+        // Nouveau bloc des annonces
+        BlocProvider(
+          create: (_) => AnnonceBloc(AnnonceRepository(AnnonceApiService())),
         ),
       ],
       child: const MyApp(),
