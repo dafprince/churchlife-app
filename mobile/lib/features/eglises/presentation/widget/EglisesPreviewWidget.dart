@@ -1,6 +1,7 @@
 // features/eglises/presentation/widgets/eglises_preview_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/features/eglises/presentation/EgliseDetailScreen.dart';
 import '../../bloc/eglise_bloc.dart';
 import '../../bloc/eglise_state.dart';
 import '../../data/models/eglise_model.dart';
@@ -56,9 +57,15 @@ class EglisesPreviewWidget extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               // Navigation vers la page complète des églises
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => EgliseScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => EgliseDetailScreen(
+                    id: eglise.id,
+                    nom: eglise.nom,
+                    imageUrl: eglise.getImageUrl(),
+                  ),
+                ),
+              );
             },
             child: Container(
               decoration: BoxDecoration(
