@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/features/categories/presentation/pages/category_page.dart';
 import 'package:mobile/features/categories/presentation/pages/homeLibrary.dart';
 import 'package:mobile/features/eglises/presentation/eglise_screen.dart';
+import 'package:mobile/features/eglises/presentation/widget/EglisesPreviewWidget.dart';
 // Import pour le widget des annonces
 import '../../features/annonce/presentation/annonce_screen.dart';
 // Imports pour le BLoC des annonces
@@ -220,113 +221,9 @@ class _AccueilPageState extends State<AccueilPage> {
                         ),
                       ),
                     ),
-                    //===
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                      child: GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 4,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
-                              childAspectRatio: 1,
-                            ),
-                        itemBuilder: (context, index) {
-                          const titles = [
-                            'Be Emptied,\nBe Filled',
-                            'a Tree of Life',
-                            'A Faith-Filled Life',
-                            'Sunset\nWalk With God',
-                          ];
-                          const authors = [
-                            'James Seawood',
-                            'James Seawood',
-                            'James Seawood',
-                            'Tyler Boss',
-                          ];
-                          final imgLinks = [
-                            'https://images.unsplash.com/photo-1470770841072-f978cfd019d',
-                            'https://images.unsplash.com/photo-1465101046530-73398c28ca',
-                            'https://images.unsplash.com/photo-150674c8136-4627b3',
-                            'https://images.unsplash.com/photo-1465101046530-7332ca',
-                          ];
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(22),
-                              image: DecorationImage(
-                                image: NetworkImage(imgLinks[index]),
-                                fit: BoxFit.cover,
-                              ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 9,
-                                  offset: Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    12,
-                                    16,
-                                    12,
-                                    0,
-                                  ),
-                                  child: Text(
-                                    titles[index],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 19,
-                                      height: 1.1,
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.black45,
-                                          blurRadius: 10,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 12,
-                                  left: 12,
-                                  right: 12,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 7,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black45,
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                    child: Text(
-                                      authors[index],
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    //=====
+                    EglisesPreviewWidget(),
+                    //==
                     const SizedBox(height: 25),
                     _buildBibliothequeSection(),
                     const SizedBox(height: 50),

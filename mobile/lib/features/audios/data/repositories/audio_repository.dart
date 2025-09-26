@@ -6,13 +6,12 @@ class AudioRepository {
 
   AudioRepository(this.apiService);
 
-  /// Récupérer tous les audios
-  /// Cette méthode fait le lien entre le BLoC et l'API
-  Future<List<AudioModel>> getAudios() async {
-    try {
-      return await apiService.getAudios();
-    } catch (e) {
-      throw Exception("Impossible de récupérer les audios: $e");
-    }
+  Future<List<AudioModel>> getAudios() {
+    return apiService.getAudios();
+  }
+
+  /// Récupère les audios liés à une église spécifique
+  Future<List<AudioModel>> getAudiosByEglise(String egliseId) {
+    return apiService.getAudiosByEglise(egliseId);
   }
 }

@@ -1,5 +1,6 @@
-import '../../../../core/api_constants.dart';
+import 'package:mobile/core/api_constants.dart';
 
+/// Modèle complet Audio avec relation vers plusieurs Eglises
 class AudioModel {
   final String id;
   final String titre;
@@ -7,26 +8,13 @@ class AudioModel {
   final String album;
   final String genre;
   final String description;
-
-  // Fichier audio
   final String audioFileName;
-  final String audioOriginalName;
   final String audioPath;
-  final int audioSize;
-  final String audioMimeType;
   final int duration;
-
-  // Image de couverture
   final String imageFileName;
-  final String imageOriginalName;
   final String imagePath;
-  final int imageSize;
-  final String imageMimeType;
-
-  // Métadonnées
   final DateTime uploadedAt;
-  final int playCount;
-  final bool isActive;
+  final List<EgliseInfo> eglises; // Relation many-to-many to Eglises
 
   AudioModel({
     required this.id,
@@ -36,22 +24,18 @@ class AudioModel {
     required this.genre,
     required this.description,
     required this.audioFileName,
-    required this.audioOriginalName,
     required this.audioPath,
-    required this.audioSize,
-    required this.audioMimeType,
     required this.duration,
     required this.imageFileName,
-    required this.imageOriginalName,
     required this.imagePath,
-    required this.imageSize,
-    required this.imageMimeType,
     required this.uploadedAt,
-    required this.playCount,
-    required this.isActive,
+    required this.eglises,
   });
 
+  /// Crée l'instance AudioModel depuis JSON
   factory AudioModel.fromJson(Map<String, dynamic> json) {
+    var eglisesJson = json['eglises'] as List<dynamic>? ?? [];
+
     return AudioModel(
       id: json['_id'] ?? '',
       titre: json['titre'] ?? '',
@@ -60,41 +44,54 @@ class AudioModel {
       genre: json['genre'] ?? '',
       description: json['description'] ?? '',
       audioFileName: json['audioFileName'] ?? '',
-      audioOriginalName: json['audioOriginalName'] ?? '',
       audioPath: json['audioPath'] ?? '',
-      audioSize: json['audioSize'] ?? 0,
-      audioMimeType: json['audioMimeType'] ?? '',
       duration: json['duration'] ?? 0,
       imageFileName: json['imageFileName'] ?? '',
-      imageOriginalName: json['imageOriginalName'] ?? '',
       imagePath: json['imagePath'] ?? '',
-      imageSize: json['imageSize'] ?? 0,
-      imageMimeType: json['imageMimeType'] ?? '',
-      uploadedAt: DateTime.parse(
-        json['uploadedAt'] ?? DateTime.now().toIso8601String(),
-      ),
-      playCount: json['playCount'] ?? 0,
-      isActive: json['isActive'] ?? true,
+      uploadedAt: DateTime.tryParse(json['uploadedAt'] ?? '') ?? DateTime.now(),
+      eglises: eglisesJson.map((e) => EgliseInfo.fromJson(e)).toList(),
     );
   }
 
-  // Méthodes utilitaires pour construire les URLs
+  /// URL complet audio (tenant compte du serveur)
   String getImageUrl() {
     final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
-    return '$baseUrl/uploads/images/$imageFileName';
+    // Supposons que imagePath contient déjà le chemin complet comme "uploads/images/filename.jpg"
+    return '$baseUrl/$imagePath';
   }
 
-  // ✅ APRÈS (utilise ApiConstants)
   String getAudioUrl() {
     final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
-    return '$baseUrl/uploads/audios/$audioFileName';
+    return '$baseUrl/$audioPath';
   }
 
-  // Méthode pour formater la durée
+  /// Durée formatée mm:ss
   String getFormattedDuration() {
-    if (duration == 0) return "Durée inconnue";
-    int minutes = duration ~/ 60;
-    int seconds = duration % 60;
-    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+    final minutes = duration ~/ 60;
+    final seconds = duration % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+}
+
+/// Classe simplifiée représentant une Eglise associée à un Audio
+class EgliseInfo {
+  final String id;
+  final String nom;
+  final String imagePath;
+
+  EgliseInfo({required this.id, required this.nom, required this.imagePath});
+
+  factory EgliseInfo.fromJson(Map<String, dynamic> json) {
+    return EgliseInfo(
+      id: json['_id'] ?? '',
+      nom: json['nom'] ?? '',
+      imagePath: json['imagePath'] ?? '',
+    );
+  }
+
+  /// URL complet image église
+  String getImageUrl() {
+    final baseUrl = ApiConstants.baseUrl.replaceAll('/api', '');
+    return '$baseUrl/$imagePath';
   }
 }

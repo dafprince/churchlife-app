@@ -229,7 +229,11 @@ class _EgliseScreenState extends State<EgliseScreen> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => EgliseDetailScreen(),
+                              builder: (_) => EgliseDetailScreen(
+                                id: eglise.id,
+                                nom: eglise.nom,
+                                imageUrl: eglise.getImageUrl(),
+                              ),
                             ),
                           );
                         },

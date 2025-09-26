@@ -196,4 +196,22 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Route pour récupérer les audios d'une église spécifique
+router.get('/byEglise/:egliseId', async (req, res) => {
+  try {
+    const audios = await Audio.find({ 
+      isActive: true,
+      eglises: req.params.egliseId 
+    })
+    .populate('eglises', 'nom imageFileName')
+    .sort({ uploadedAt: -1 });
+    
+    res.json(audios);
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Erreur récupération audios par église', 
+      error: error.message 
+    });
+  }
+});
 module.exports = router;

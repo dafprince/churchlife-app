@@ -10,6 +10,9 @@ import 'package:mobile/features/audios/data/repositories/audio_repository.dart';
 import 'package:mobile/features/categories/bloc/category_bloc.dart';
 import 'package:mobile/features/categories/data/datasources/category_api_service.dart';
 import 'package:mobile/features/categories/data/repositories/category_repository.dart';
+import 'package:mobile/features/eglises/bloc/eglise_bloc.dart';
+import 'package:mobile/features/eglises/data/datasources/eglise_api_service.dart';
+import 'package:mobile/features/eglises/data/repositories/eglise_repositorie.dart';
 import 'package:mobile/features/livres/bloc/livre_bloc.dart';
 import 'package:mobile/features/livres/data/datasources/LivreApiService.dart';
 import 'package:mobile/features/livres/data/repositories/LivreRepositorie.dart';
@@ -64,7 +67,12 @@ void main() {
         BlocProvider(
           create: (_) => AnnonceBloc(AnnonceRepository(AnnonceApiService())),
         ),
+        // Nouveau bloc des eglises
+        BlocProvider(
+          create: (_) => EgliseBloc(EgliseRepository(EgliseApiService())),
+        ),
       ],
+
       child: const MyApp(),
     ),
   );
