@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile/features/categories/presentation/pages/category_page.dart';
+import 'package:mobile/features/annonce/presentation/annonce_screen.dart';
+import 'package:mobile/features/annonce/bloc/annonce_bloc.dart';
+import 'package:mobile/features/annonce/bloc/annonce_event.dart';
 import 'package:mobile/features/categories/presentation/pages/homeLibrary.dart';
+import 'package:mobile/features/categories/presentation/widgets/categories_preview_widget.dart';
 import 'package:mobile/features/eglises/presentation/eglise_screen.dart';
 import 'package:mobile/features/eglises/presentation/widget/EglisesPreviewWidget.dart';
-// Import pour le widget des annonces
-import '../../features/annonce/presentation/annonce_screen.dart';
-// Imports pour le BLoC des annonces
-import '../../features/annonce/bloc/annonce_bloc.dart';
-import '../../features/annonce/bloc/annonce_event.dart';
+import 'package:mobile/features/eglises/bloc/eglise_bloc.dart';
+import 'package:mobile/features/eglises/bloc/eglise_event.dart';
+
+import 'package:mobile/features/categories/bloc/category_bloc.dart';
+import 'package:mobile/features/categories/bloc/category_event.dart';
+import 'package:mobile/features/offrande/presentation/DonationSectionWidget.dart';
+// Ajoute les imports nécessaires pour la navigation bibliothèque complète
 
 class AccueilPage extends StatefulWidget {
   @override
@@ -24,6 +29,10 @@ class _AccueilPageState extends State<AccueilPage> {
     super.initState();
     // Charger les annonces au démarrage
     context.read<AnnonceBloc>().add(LoadAnnoncesEvent());
+    // Charger les églises au démarrage
+    context.read<EgliseBloc>().add(LoadEglisesEvent());
+    // Charger les catégories de livres/bibliothèque au démarrage
+    context.read<CategoryBloc>().add(LoadCategoriesEvent());
   }
 
   @override
@@ -49,7 +58,7 @@ class _AccueilPageState extends State<AccueilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF6E8EF5), // background bleu fixe
+      backgroundColor: const Color(0xFF6E8EF5),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (idx) {
@@ -59,7 +68,7 @@ class _AccueilPageState extends State<AccueilPage> {
         },
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
-        backgroundColor: Color(0xFF6E8EF5),
+        backgroundColor: const Color(0xFF6E8EF5),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Accueil"),
           BottomNavigationBarItem(
@@ -78,7 +87,7 @@ class _AccueilPageState extends State<AccueilPage> {
           SliverAppBar(
             pinned: true,
             expandedHeight: 240,
-            backgroundColor: Color(0xFF6E8EF5),
+            backgroundColor: const Color(0xFF6E8EF5),
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
                 final top = constraints.biggest.height;
@@ -87,8 +96,7 @@ class _AccueilPageState extends State<AccueilPage> {
                 final progress =
                     ((top - collapsedHeight) / (240 - collapsedHeight))
                         .clamp(0, 1)
-                        .toDouble(); // cast explicite en double
-
+                        .toDouble();
                 return Stack(
                   fit: StackFit.expand,
                   children: [
@@ -97,7 +105,10 @@ class _AccueilPageState extends State<AccueilPage> {
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF6E8EF5), Color(0xFF56C6FF)],
+                            colors: [
+                              const Color(0xFF6E8EF5),
+                              const Color(0xFF56C6FF),
+                            ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -107,7 +118,11 @@ class _AccueilPageState extends State<AccueilPage> {
                     Opacity(
                       opacity: progress,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 40, left: 18, right: 18),
+                        padding: const EdgeInsets.only(
+                          top: 40,
+                          left: 18,
+                          right: 18,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -115,12 +130,12 @@ class _AccueilPageState extends State<AccueilPage> {
                             Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.account_balance,
                                   color: Colors.white,
                                   size: 36,
                                 ),
-                                Text(
+                                const Text(
                                   'ChurchLife',
                                   style: TextStyle(
                                     color: Colors.white,
@@ -143,12 +158,12 @@ class _AccueilPageState extends State<AccueilPage> {
                           left: 10,
                           right: 10,
                         ),
-                        color: Color(0xFF6E8EF5),
+                        color: const Color(0xFF6E8EF5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _buildCircleIconButton(Icons.menu),
-                            Text(
+                            const Text(
                               'ChurchLife',
                               style: TextStyle(
                                 color: Colors.white,
@@ -176,7 +191,6 @@ class _AccueilPageState extends State<AccueilPage> {
                     // Widget des annonces avec données réelles du backend
                     AnnoncesSectionWidget(),
                     const SizedBox(height: 24),
-                    //==
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -197,9 +211,9 @@ class _AccueilPageState extends State<AccueilPage> {
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               padding: const EdgeInsets.all(12),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.headphones_rounded,
-                                color: const Color(0xFF6E8EF5),
+                                color: Color(0xFF6E8EF5),
                                 size: 28,
                               ),
                             ),
@@ -221,12 +235,12 @@ class _AccueilPageState extends State<AccueilPage> {
                         ),
                       ),
                     ),
-                    //=====
                     EglisesPreviewWidget(),
-                    //==
                     const SizedBox(height: 25),
                     _buildBibliothequeSection(),
                     const SizedBox(height: 50),
+                    //======
+                    DonationSectionWidget(),
                   ],
                 ),
               ),
@@ -238,36 +252,6 @@ class _AccueilPageState extends State<AccueilPage> {
   }
 
   Widget _buildBibliothequeSection() {
-    final categories = [
-      {
-        'title': 'Mariage',
-        'image': 'https://images.unsplash.com/photo-1560216055-42861a07c6e8',
-      },
-      {
-        'title': 'Combat spirituel',
-        'image': 'https://images.unsplash.com/photo-1494783367193-149034c05e8f',
-      },
-      {
-        'title': 'Sagesse',
-        'image': 'https://images.unsplash.com/photo-1506744038136-4627b3a3c2b5',
-      },
-      {
-        'title': 'Maturité',
-        'image': 'https://images.unsplash.com/photo-1467786822113-5ef3c3247213',
-      },
-      {
-        'title': 'Démon/Anges',
-        'image': 'https://images.unsplash.com/photo-1446697861703-cd2c70a18eea',
-      },
-      {
-        'title': 'Sorcellerie',
-        'image': 'https://images.unsplash.com/photo-1417021542247-8d428cbe1e61',
-      },
-      {
-        'title': 'Amour',
-        'image': 'https://images.unsplash.com/photo-1506744348236-7d124b9b172f',
-      },
-    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(
@@ -298,87 +282,18 @@ class _AccueilPageState extends State<AccueilPage> {
             ),
           ),
           const SizedBox(height: 6),
-          SizedBox(
-            height: 210,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 16),
-              itemBuilder: (context, index) {
-                final cat = categories[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(22),
-                        image: DecorationImage(
-                          image: NetworkImage(cat['image']!),
-                          fit: BoxFit.cover,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.bottomLeft,
-                      padding: const EdgeInsets.all(12),
-                      child: Text(
-                        cat['title']!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black45,
-                              blurRadius: 10,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    SizedBox(
-                      width: 140,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // TODO: navigation category
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6E8EF5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          elevation: 7,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                        ),
-                        child: const Text(
-                          'Explorer',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+          // Voici le widget preview dynamique des catégories VRAIES
+          CategoriesPreviewWidget(),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: navigate full library
-                Navigator.of(
+                // TODO : Navigation vers la page bibliothèque complète
+                Navigator.push(
                   context,
-                ).push(MaterialPageRoute(builder: (_) => PenseeDuJourWidget()));
+                  MaterialPageRoute(builder: (_) => PenseeDuJourWidget()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6E8EF5),

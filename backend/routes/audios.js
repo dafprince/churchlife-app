@@ -3,7 +3,7 @@ const router = express.Router();
 const Audio = require('../models/Audio');
 const upload = require('../config/multerConfig');
 const fs = require('fs');  // Pour supprimer les fichiers physiques
-const ffprobe = require('node-ffprobe');
+const { getAudioDurationInSeconds } = require('get-audio-duration');
 
 // ============================================
 // POST - Upload audio + image + association églises
@@ -22,10 +22,12 @@ router.post('/upload', upload.fields([
     // Calculer la durée
 let audioDuration = 0;
 try {
-  const probeData = await ffprobe(audioFile.path);
-  audioDuration = Math.round(probeData.streams[0].duration || 0);
+  console.log('Calcul durée pour:', audioFile.path);
+  audioDuration = Math.round(await getAudioDurationInSeconds(audioFile.path));
+  console.log('Durée calculée:', audioDuration, 'secondes');
 } catch (error) {
   console.error('Erreur calcul durée:', error);
+  audioDuration = 0; // Fallback à 0 en cas d'erreur
 }
     let eglisesArray = [];
     if (req.body.eglises) {

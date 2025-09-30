@@ -1,32 +1,8 @@
 import 'package:flutter/material.dart';
-
-// URLs corrigées et complètes
-final List<Map<String, String>> categories = [
-  {
-    "titre": "Livres de Mariage",
-    "image":
-        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500",
-    "description": "Des guides pour renforcer votre mariage par la foi.",
-  },
-  {
-    "titre": "Combat Spirituel",
-    "image":
-        "https://images.unsplash.com/photo-1491336477066-31156b5e8caf?w=500",
-    "description": "Livres sur la guerre spirituelle et la victoire.",
-  },
-  {
-    "titre": "Croissance Spirituelle",
-    "image":
-        "https://images.unsplash.com/photo-1523906630133-f6934a84c6e1?w=500",
-    "description": "Pour approfondir votre foi et votre relation avec Dieu.",
-  },
-  {
-    "titre": "Prière et Méditation",
-    "image":
-        "https://images.unsplash.com/photo-1470770841072-f978cfd019d0?w=500",
-    "description": "Les meilleures ressources pour la vie de prière.",
-  },
-];
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/category_bloc.dart';
+import '../../bloc/category_event.dart';
+import '../../presentation/widgets/categories_library_section.dart';
 
 class PenseeDuJourWidget extends StatefulWidget {
   @override
@@ -53,6 +29,9 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
   @override
   void initState() {
     super.initState();
+    // Charger les catégories au démarrage
+    context.read<CategoryBloc>().add(LoadCategoriesEvent());
+
     _animationController = AnimationController(
       duration: Duration(milliseconds: 300),
       vsync: this,
@@ -158,7 +137,7 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
                     ),
                     SizedBox(width: 8),
                     Text(
-                      '24 Septembre 2025',
+                      '30 Septembre 2025',
                       style: TextStyle(
                         color: Color(0xFF8B4513),
                         fontWeight: FontWeight.w600,
@@ -268,7 +247,7 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          // 🌟 SliverAppBar personnalisé avec header magnifique
+          // SliverAppBar personnalisé avec header magnifique
           SliverAppBar(
             pinned: true, // Reste fixe en haut
             expandedHeight: 320, // Grand header
@@ -279,7 +258,7 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            // ✨ FlexibleSpaceBar avec design personnalisé
+            // FlexibleSpaceBar avec design personnalisé
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text(
@@ -297,7 +276,7 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
                   ],
                 ),
               ),
-              // 🎨 Background magnifique avec dégradé + image + wave
+              // Background magnifique avec dégradé + image + wave
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -391,7 +370,7 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
                     ),
                   ),
 
-                  // 🌊 Effet wave en bas du header
+                  // Effet wave en bas du header
                   Positioned(
                     bottom: -1,
                     left: 0,
@@ -403,10 +382,10 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
             ),
           ),
 
-          // 📖 Pensée du jour qui glisse sous l'AppBar
+          // Pensée du jour qui glisse sous l'AppBar
           SliverToBoxAdapter(child: _buildPenseeDuJour()),
 
-          // 🔍 Titre de section qui glisse sous l'AppBar
+          // Titre de section qui glisse sous l'AppBar
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -427,108 +406,8 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
             ),
           ),
 
-          // 📚 Liste des catégories qui glisse sous l'AppBar
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final categorie = categories[index];
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.blue.shade50],
-                      ),
-                    ),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(12),
-                      leading: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            categorie["image"]!,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(Icons.book, color: Colors.grey),
-                                ),
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        categorie["titre"]!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                          color: Colors.blue.shade800,
-                        ),
-                      ),
-                      subtitle: Text(
-                        categorie["description"]!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color(0xFF6E8EF5),
-                        size: 16,
-                      ),
-                      onTap: () {
-                        print('Tapped on: ${categorie["titre"]}');
-                      },
-                    ),
-                  ),
-                ),
-              );
-            }, childCount: categories.length),
-          ),
+          // ✅ SECTION MODIFIÉE : Vraies catégories depuis le backend
+          CategoriesLibrarySection(),
 
           // Espacement en bas
           SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -563,7 +442,7 @@ Prions pour que notre foi grandisse chaque jour, non par nos efforts, mais par l
   }
 }
 
-// 🌊 Classe pour créer l'effet wave/onde
+// Classe pour créer l'effet wave/onde
 class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
