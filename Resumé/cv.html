@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Sambou Dafonseca Prince</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            line-height: 1.3;
+            font-size: 11px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .photo-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            background: #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header .titre {
+            font-size: 0.95em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .contact-bar {
+            background: #f8f9fa;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 2px solid #667eea;
+            font-size: 0.85em;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #333;
+        }
+
+        .contact-item strong {
+            color: #667eea;
+        }
+
+        .content {
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .left-column {
+            grid-column: 1;
+        }
+
+        .right-column {
+            grid-column: 2;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 6px;
+            padding-bottom: 3px;
+            border-bottom: 2px solid #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profil-text {
+            color: #555;
+            text-align: justify;
+            line-height: 1.4;
+            font-size: 0.85em;
+        }
+
+        .competences-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 5px;
+        }
+
+        .competence-item {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 6px 8px;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+            font-size: 0.8em;
+        }
+
+        .experience-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+            gap: 8px;
+        }
+
+        .experience-title {
+            font-size: 0.95em;
+            color: #333;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .experience-company {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .experience-date {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .experience-type {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 4px;
+            font-size: 0.75em;
+        }
+
+        .experience-item ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .experience-item li {
+            padding: 2px 0 2px 12px;
+            position: relative;
+            color: #555;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+
+        .experience-item li:before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .formation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .formation-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .formation-title {
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .formation-year {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        .langues-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .langue-item {
+            background: white;
+            border: 1.5px solid #667eea;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+        }
+
+        .langue-name {
+            font-weight: bold;
+        }
+
+        .langue-level {
+            opacity: 0.8;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            .content {
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- EN-TÊTE -->
+        <div class="header">
+            <div class="photo-container">
+                <img src="p.jpg" alt="Photo de Sambou Dafonseca Prince">
+            </div>
+            <div class="header-text">
+                <h1>Sambou Dafonseca Prince</h1>
+                <div class="titre">Conseiller Client & Support Technique</div>
+            </div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="contact-bar">
+            <div class="contact-item">
+                <strong>📞</strong> +221 78 739 40 11
+            </div>
+            <div class="contact-item">
+                <strong>✉️</strong> onesimedafonseca@gmail.com
+            </div>
+            <div class="contact-item">
+                <strong>📍</strong> Front de terre, Dakar
+            </div>
+        </div>
+
+        <!-- CONTENU -->
+        <div class="content">
+            <!-- COLONNE GAUCHE -->
+            <div class="left-column">
+                <!-- PROFIL -->
+                <div class="section">
+                    <h2>Profil</h2>
+                    <p class="profil-text">
+                        Professionnel du service client avec +2 ans d'expérience en téléconseil B2B/B2C (Orange, SFR). Spécialisé en gestion des réclamations, fidélisation et support technique multicanal. Expert CRM et environnements à fort volume.
+                    </p>
+                </div>
+
+                <!-- COMPÉTENCES -->
+                <div class="section">
+                    <h2>Compétences</h2>
+                    <div class="competences-grid">
+                        <div class="competence-item">Service client & réclamations</div>
+                        <div class="competence-item">CRM Arbéo & outils de suivi</div>
+                        <div class="competence-item">Vente & fidélisation client</div>
+                        <div class="competence-item">Support technique multicanal</div>
+                        <div class="competence-item">Dépannage à distance</div>
+                        <div class="competence-item">Résolution problèmes réseaux</div>
+                    </div>
+                </div>
+
+                <!-- FORMATION -->
+                <div class="section">
+                    <h2>Formation</h2>
+                    <div class="formation-grid">
+                        <div class="formation-item">
+                            <div class="formation-title">Licence Génie Logiciel</div>
+                            <div class="formation-year">2019</div>
+                        </div>
+                        <div class="formation-item">
+                            <div class="formation-title">DTS Génie Logiciel</div>
+                            <div class="formation-year">2017-2018</div>
+                        </div>
+                        <div class="formation-item">
+                            <div class="formation-title">DTS Réseaux Info</div>
+                            <div class="formation-year">2017-2018</div>
+                        </div>
+                        <div class="formation-item">
+                            <div class="formation-title">Bac Scientifique</div>
+                            <div class="formation-year">2017</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LANGUES -->
+                <div class="section">
+                    <h2>Langues</h2>
+                    <div class="langues-flex">
+                        <div class="langue-item">
+                            <span class="langue-name">Français</span> (Courant)
+                        </div>
+                        <div class="langue-item">
+                            <span class="langue-name">Anglais</span> (Basique)
+                        </div>
+                        <div class="langue-item">
+                            <span class="langue-name">Portugais</span> (Intermédiaire)
+                        </div>
+                        <div class="langue-item">
+                            <span class="langue-name">Lingala</span> (Courant)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLONNE DROITE -->
+            <div class="right-column">
+                <!-- EXPÉRIENCE -->
+                <div class="section">
+                    <h2>Expérience Professionnelle</h2>
+
+                    <!-- Sitel -->
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <div class="experience-title">Conseiller Client Chat Orange</div>
+                                <div class="experience-company">Sitel</div>
+                            </div>
+                            <div class="experience-date">Fév-Juin 2024</div>
+                        </div>
+                        <div class="experience-type">Chat client (messagerie)</div>
+                        <ul>
+                            <li>Traitement demandes clients via chat</li>
+                            <li>Assistance technique connexion internet/mobile</li>
+                            <li>Gestion réclamations et transferts cas complexes</li>
+                        </ul>
+                    </div>
+
+                    <!-- Intelcia -->
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <div class="experience-title">Conseiller Commercial SFR</div>
+                                <div class="experience-company">Intelcia</div>
+                            </div>
+                            <div class="experience-date">Mar-Oct 2022</div>
+                        </div>
+                        <div class="experience-type">Téléphone (entrant/sortant)</div>
+                        <ul>
+                            <li>Conseil abonnements et services SFR</li>
+                            <li>Vente et fidélisation via offres ciblées</li>
+                            <li>Gestion CRM Arbéo (dossiers, réclamations)</li>
+                            <li>Atteinte objectifs satisfaction et conversion</li>
+                        </ul>
+                    </div>
+
+                    <!-- Majorel -->
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <div class="experience-title">Téléconseiller B2B Orange</div>
+                                <div class="experience-company">Majorel</div>
+                            </div>
+                            <div class="experience-date">Déc 2021-Fév 2022</div>
+                        </div>
+                        <div class="experience-type">Chat client B2B</div>
+                        <ul>
+                            <li>Gestion demandes clients professionnels</li>
+                            <li>Traitement facturation, remboursements</li>
+                            <li>Assistance technique et orientation solutions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

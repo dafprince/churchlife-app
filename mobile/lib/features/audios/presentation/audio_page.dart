@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mobile/features/audios/presentation/widgets/AudioListItemPro.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
@@ -13,7 +14,7 @@ class AudioPlayerState {
   final bool isPlaying;
   final Duration currentPosition;
   final Duration totalDuration;
-
+  //================== modification
   AudioPlayerState({
     this.currentAudio,
     this.isPlaying = false,
@@ -168,7 +169,7 @@ class _AudioPageState extends State<AudioPage> {
         final isCurrentlyPlaying =
             playerState.currentAudio?.id == audio.id && playerState.isPlaying;
 
-        return AudioListItem(
+        return AudioListItemPro(
           audio: audio,
           isPlaying: isCurrentlyPlaying,
           onTap: () => _onAudioTap(audio),

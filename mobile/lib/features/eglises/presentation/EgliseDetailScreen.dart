@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/features/audios/presentation/audio_page.dart';
+import 'package:mobile/features/audios/presentation/widgets/AudioListItemPro.dart';
 import '../../audios/bloc/audio_bloc.dart';
 import '../../audios/bloc/audio_event.dart';
 import '../../audios/bloc/audio_state.dart';
@@ -11,7 +12,7 @@ class EgliseDetailScreen extends StatefulWidget {
   final String id;
   final String nom;
   final String imageUrl;
-
+  //===============modife
   const EgliseDetailScreen({
     Key? key,
     required this.id,
@@ -153,7 +154,7 @@ class _EgliseDetailScreenState extends State<EgliseDetailScreen> {
                         playerState.currentAudio?.id == audio.id &&
                         playerState.isPlaying;
 
-                    return AudioListItem(
+                    return AudioListItemPro(
                       audio: audio,
                       isPlaying: isPlaying,
                       onTap: () => _playAudio(audio),

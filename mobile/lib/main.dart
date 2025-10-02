@@ -16,10 +16,12 @@ import 'package:mobile/features/eglises/data/repositories/eglise_repositorie.dar
 import 'package:mobile/features/livres/bloc/livre_bloc.dart';
 import 'package:mobile/features/livres/data/datasources/LivreApiService.dart';
 import 'package:mobile/features/livres/data/repositories/LivreRepositorie.dart';
+import 'package:mobile/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:mobile/features/users/bloc/user_bloc.dart';
 import 'package:mobile/features/users/bloc/user_event.dart';
 import 'package:mobile/features/users/data/repositories/UserRepository.dart';
 import 'package:mobile/features/users/presentation/pages/users_page.dart';
+import 'package:mobile/public/presentation/Accueil.dart';
 import 'features/users/data/datasources/UserApiService.dart';
 import 'package:flutter/services.dart';
 
@@ -90,6 +92,10 @@ class MyApp extends StatelessWidget {
 
       home: SplashScreen(),
       // 👈 on démarre directement sur UserPage
+      routes: {
+        '/onboarding': (context) => OnboardingScreen(),
+        '/home': (context) => AccueilPage(),
+      },
     );
   }
 }
