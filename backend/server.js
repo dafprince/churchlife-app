@@ -67,6 +67,22 @@ app.get('/health', (req, res) => {
         message: 'ChurchLife Backend is running' 
     });
 });
+// Route principale API
+app.get('/api', (req, res) => {
+  res.json({
+    status: "OK ✅",
+    message: "Bienvenue sur l'API ChurchLife",
+    endpoints: {
+      users: "/api/users",
+      annonces: "/api/annonces",
+      livres: "/api/livres",
+      categories: "/api/categories",
+      eglises: "/api/eglises",
+      audios: "/api/audios"
+    }
+  });
+});
+
 
 // Connexion MongoDB
 mongoose.connect(process.env.MONGO_URL, {

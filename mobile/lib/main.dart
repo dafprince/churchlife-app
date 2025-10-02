@@ -26,7 +26,7 @@ import 'features/users/data/datasources/UserApiService.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized(); // nécessaire avant async dans main
+  WidgetsFlutterBinding.ensureInitialized(); // nécessaire avant async dans main
   /**
  * CECI PERMET DE TESTER SI LAPI MARCHE ET MONTRE SUR LA CONSOLE LAFFICHAGE DES USER DEPUIS LE BACKEND
  *  final userService = UserApiService();
