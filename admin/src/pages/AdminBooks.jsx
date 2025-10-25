@@ -3,7 +3,7 @@ import { styles, dashboardStyles, bookStyles, modalStyles } from '../css/style';
 import { 
   FaList, FaTh, FaSearch, FaPlus, FaTrash, FaDownload, FaFilePdf, FaBook, FaTimes
 } from 'react-icons/fa';
-import { getLivres, deleteLivre, getCategories, uploadLivre, getImageUrl } from '../services/api';
+import { getLivres, deleteLivre, getCategories, uploadLivre } from '../services/api';
 
 export default function AdminBooks() {
   // ========== ÉTATS ==========
@@ -124,20 +124,7 @@ const filtered = books.filter(b => {
   };
 
   // ========== HELPER : Obtenir les noms des catégories d'un livre ==========
-const getCategoryNames = (bookCategories) => {
-  if (!bookCategories || bookCategories.length === 0) return 'Non classé';
-  
-  if (typeof bookCategories[0] === 'object' && bookCategories[0].nom) {
-    return bookCategories.map(cat => cat.nom).join(', ');
-  }
-  
-  const names = bookCategories.map(catId => {
-    const cat = categories.find(c => c._id === catId);
-    return cat ? cat.nom : '';
-  }).filter(name => name);
-  
-  return names.length > 0 ? names.join(', ') : 'Non classé';
-};
+
 
   // ========== RENDU CONDITIONNEL SI CHARGEMENT ==========
   if (loading) return <div style={{ padding: '20px' }}>Chargement des livres...</div>;
@@ -240,17 +227,17 @@ const getCategoryNames = (bookCategories) => {
           <table style={styles.table}>
             <thead style={styles.tableHeader}>
               <tr>
-                <th style={styles.th}>
-                  <input
-                    type="checkbox"
+                <th style={styles.thCenter}>
+                  <input 
+                    type="checkbox" 
                     checked={allVisibleSelected}
                     onChange={(e) => toggleSelectAll(e.target.checked)}
                   />
                 </th>
+                <th style={styles.th}>Couverture</th>
                 <th style={styles.th}>Titre</th>
                 <th style={styles.th}>Auteur</th>
-                <th style={styles.th}>Catégorie(s)</th>
-                <th style={styles.th}>Taille</th>
+                <th style={styles.th}>Catégorie</th>
                 <th style={styles.th}>Téléchargements</th>
                 <th style={styles.th}>Date d'ajout</th>
                 <th style={styles.thCenter}>Actions</th>
@@ -259,9 +246,9 @@ const getCategoryNames = (bookCategories) => {
             <tbody>
               {filtered.map((b, idx) => (
                 <tr key={b._id} style={idx % 2 === 0 ? styles.rowEven : styles.rowOdd}>
-                  <td style={styles.td}>
-                    <input
-                      type="checkbox"
+                  <td style={styles.tdCenter}>
+                    <input 
+                      type="checkbox" 
                       checked={selected.includes(b._id)}
                       onChange={() => toggleOne(b._id)}
                     />
@@ -270,30 +257,35 @@ const getCategoryNames = (bookCategories) => {
                   <td style={styles.td}>
                     <div style={bookStyles.titleCellWrap}>
                       <img
-                        src={getImageUrl(b.imagePath)}
+                        src={b.imagePath}
                         alt={b.titre}
                         style={bookStyles.tableMiniCover}
                         onError={(e) => { 
                           e.currentTarget.src = 'https://via.placeholder.com/48x64?text=PDF';
                         }}
                       />
-                      <div>
-                        <div style={bookStyles.titleText}>{b.titre}</div>
-                        <div style={bookStyles.fileNameText}>{b.pdfOriginalName}</div>
-                      </div>
+                    </div>
+                  </td>
+
+                  <td style={styles.td}>
+                    <div style={bookStyles.titleText}>{b.titre}</div>
+                    <div style={bookStyles.fileNameText}>
+                      {b.pdfFileName || 'fichier.pdf'}
                     </div>
                   </td>
 
                   <td style={styles.td}>{b.auteur}</td>
 
                   <td style={styles.td}>
-                    <span style={{ ...bookStyles.badge, ...bookStyles.badgeCategory }}>
-                      {getCategoryNames(b.categories)}
-                    </span>
-                  </td>
-
-                  <td style={styles.td}>
-                    {b.pdfSize ? `${(b.pdfSize / 1024 / 1024).toFixed(1)} MB` : 'N/A'}
+                    {(b.categories || []).map((cat, i) => (
+                      <span 
+                        key={i} 
+                        style={{ ...bookStyles.badge, ...bookStyles.badgeCategory, marginRight: 4 }}
+                      >
+                        {typeof cat === 'object' ? cat.nom : cat}
+                      </span>
+                    ))}
+                    {(!b.categories || b.categories.length === 0) && 'Non classé'}
                   </td>
 
                   <td style={styles.td}>
@@ -306,20 +298,62 @@ const getCategoryNames = (bookCategories) => {
                     {new Date(b.uploadedAt).toLocaleDateString('fr-FR')}
                   </td>
 
+                  {/* ========== ACTIONS : 3 BOUTONS ========== */}
                   <td style={styles.tdCenter}>
+                    {/* BOUTON 1 : VOIR LE PDF (ouvre dans nouvel onglet) */}
                     <a 
-                      href={getImageUrl(b.pdfPath)} 
+                      href={b.pdfPath} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       style={{ textDecoration: 'none' }}
                     >
-                      <button style={bookStyles.smallIconBtn} title="Télécharger">
+                      <button 
+                        style={{ 
+                          ...bookStyles.smallIconBtn, 
+                          backgroundColor: '#3b82f6',
+                          color: 'white', 
+                          marginRight: 8,
+                          border: 'none',
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          cursor: 'pointer'
+                        }} 
+                        title="Voir le PDF"
+                      >
+                        <FaFilePdf />
+                      </button>
+                    </a>
+
+                    {/* BOUTON 2 : TÉLÉCHARGER */}
+                    <a 
+                      href={b.pdfPath} 
+                      download={`${b.titre}.pdf`}
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <button 
+                        style={{ 
+                          ...bookStyles.smallIconBtn, 
+                          marginRight: 8,
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          cursor: 'pointer'
+                        }} 
+                        title="Télécharger le PDF"
+                      >
                         <FaDownload />
                       </button>
-                    </a>{' '}
+                    </a>
+
+                    {/* BOUTON 3 : SUPPRIMER */}
                     <button
-                      style={{ ...bookStyles.smallIconBtn, color: '#b91c1c' }}
-                      title="Supprimer"
+                      style={{ 
+                        ...bookStyles.smallIconBtn, 
+                        color: '#b91c1c',
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}
+                      title="Supprimer le livre"
                       onClick={() => handleDelete(b._id, b.titre)}
                     >
                       <FaTrash />
@@ -343,16 +377,19 @@ const getCategoryNames = (bookCategories) => {
       {/* ========== VUE GRILLE ========== */}
       {viewMode === 'grid' && (
         <div style={bookStyles.grid}>
-          {filtered.map((b) => (
-            <GridCard 
-              key={b._id} 
-              book={b} 
-              categories={categories}
-              onDelete={handleDelete} 
-            />
-          ))}
-          {filtered.length === 0 && (
-            <div style={styles.emptyState}>Aucun livre trouvé</div>
+          {filtered.length === 0 ? (
+            <div style={{ padding: '40px', fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+              Aucun livre trouvé
+            </div>
+          ) : (
+            filtered.map(book => (
+              <GridCard 
+                key={book._id} 
+                book={book} 
+                categories={categories}
+                onDelete={handleDelete} 
+              />
+            ))
           )}
         </div>
       )}
@@ -402,7 +439,7 @@ function GridCard({ book, categories, onDelete }) {
     >
       <div style={bookStyles.coverWrap}>
         <img
-          src={getImageUrl(book.imagePath)}
+          src={book.imagePath}
           alt={book.titre}
           style={bookStyles.coverImg}
           onError={(e) => { 
@@ -426,15 +463,37 @@ function GridCard({ book, categories, onDelete }) {
             {book.pdfSize ? `${(book.pdfSize / 1024 / 1024).toFixed(1)} MB` : 'N/A'}
           </span>
           <div style={bookStyles.cardActions}>
+            {/* BOUTON VOIR PDF */}
             <a 
-              href={getImageUrl(book.pdfPath)} 
+              href={book.pdfPath} 
               target="_blank" 
               rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <button 
+                style={{ 
+                  ...bookStyles.smallIconBtn, 
+                  backgroundColor: '#3b82f6',
+                  color: 'white'
+                }} 
+                title="Voir le PDF"
+              >
+                <FaFilePdf />
+              </button>
+            </a>
+            
+            {/* BOUTON TÉLÉCHARGER */}
+            <a 
+              href={book.pdfPath} 
+              download={`${book.titre}.pdf`}
+              style={{ textDecoration: 'none' }}
             >
               <button style={bookStyles.smallIconBtn} title="Télécharger">
                 <FaDownload />
               </button>
             </a>
+            
+            {/* BOUTON SUPPRIMER */}
             <button
               style={{ ...bookStyles.smallIconBtn, color: '#b91c1c' }}
               title="Supprimer"

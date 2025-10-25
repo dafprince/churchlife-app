@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { styles, audioStyles, modalStyles } from '../css/style';
 import { FaPlus } from 'react-icons/fa';
-import { getAudios, uploadAudio, deleteAudio, getImageUrl, getEglises } from '../services/api';
+import { getAudios, uploadAudio, deleteAudio, getEglises } from '../services/api';
 
 const AdminAudios = () => {
   const [audios, setAudios] = useState([]);
@@ -114,8 +114,8 @@ const AdminAudios = () => {
 
 const AudioCard = ({ audio, onDelete }) => {
   const [hover, setHover] = useState(false);
-  const imageUrl = getImageUrl(audio.imagePath);
-  const audioUrl = getImageUrl(audio.audioPath);
+  const imageUrl = audio.imagePath;  // ← Enlève getImageUrl()
+const audioUrl = audio.audioPath;  // ← Enlève getImageUrl()
 
   // Formatage date uploadedAt avec affichage "lundi 23 octobre 2024"
   const formatDate = dateStr => {

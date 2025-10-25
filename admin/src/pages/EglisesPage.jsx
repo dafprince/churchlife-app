@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getEglises, createEglise, deleteEglise, getImageUrl } from '../services/api';
+import { getEglises, createEglise, deleteEglise } from '../services/api';
 import { styles } from '../css/style';
 
 const EglisesPage = () => {
@@ -110,12 +110,12 @@ const EglisesPage = () => {
             {eglises.map((eglise, idx) => (
               <tr key={eglise._id} style={idx % 2 === 0 ? styles.rowEven : styles.rowOdd}>
                 <td style={styles.td}>
-                  <img
-                    src={getImageUrl(eglise.imagePath)}
-                    alt={eglise.nom}
-                    style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover' }}
-                    onError={e => (e.target.src = 'https://via.placeholder.com/60?text=No+Image')}
-                  />
+                <img
+  src={eglise.imagePath}  // ← Enlève getImageUrl()
+  alt={eglise.nom}
+  style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover' }}
+  onError={e => (e.target.src = 'https://via.placeholder.com/60?text=No+Image')}
+/>
                 </td>
                 <td style={styles.td}>{eglise.nom}</td>
                 <td style={styles.td}>{new Date(eglise.createdAt).toLocaleDateString('fr-FR')}</td>

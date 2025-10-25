@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAnnonces, createAnnonce, deleteAnnonce, getImageUrl } from '../services/api';
+import { getAnnonces, createAnnonce, deleteAnnonce } from '../services/api';
 import { styles } from '../css/style';
 
 const AdminAnnonces = () => {
@@ -112,12 +112,12 @@ const AdminAnnonces = () => {
             {annonces.map(({ _id, image, texte }, i) => (
               <tr key={_id} style={i % 2 === 0 ? styles.rowEven : styles.rowOdd}>
                 <td style={styles.td}>
-                  <img
-                    src={getImageUrl(image)}
-                    alt="Annonce"
-                    style={{ width: 100, height: 60, objectFit: 'cover', borderRadius: 6 }}
-                    onError={e => (e.target.src = 'https://via.placeholder.com/100x60?text=No+Image')}
-                  />
+                 <img
+  src={image}  // ← Enlève getImageUrl()
+  alt="Annonce"
+  style={{ width: 100, height: 60, objectFit: 'cover', borderRadius: 6 }}
+  onError={e => (e.target.src = 'https://via.placeholder.com/100x60?text=No+Image')}
+/>
                 </td>
                 <td style={styles.td}>{texte}</td>
                 <td style={styles.tdCenter}>
